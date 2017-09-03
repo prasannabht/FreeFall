@@ -14,6 +14,9 @@ public class RestartBehaviour : MonoBehaviour {
 	void Start(){
 		alphaLevel = 1.0f;
 
+		//Play pause theme music
+		FindObjectOfType<AudioManager>().Play("StartTheme");
+
 		//currScore = transform.root.FindChild ("currentScore").GetComponent<SpriteRenderer>();
 		//currScore = GameObject.Find("GameController").GetComponent<SpriteRenderer>();
 		//highScore = GameObject.Find("highScore").GetComponent<SpriteRenderer>();
@@ -40,6 +43,14 @@ public class RestartBehaviour : MonoBehaviour {
 	}
 
 	void OnMouseDown(){
+
+		//Play click sound
+		FindObjectOfType<AudioManager>().Play("Click");
+
+		//Stop pause theme music
+		FindObjectOfType<AudioManager>().Stop("StartTheme");
+		FindObjectOfType<AudioManager>().Play("Theme");
+
 		isRestartClicked = true;
 		Time.timeScale = 1;
 	}

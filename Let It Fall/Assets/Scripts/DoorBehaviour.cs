@@ -15,6 +15,8 @@ public class DoorBehaviour : MonoBehaviour {
 	bool fadeAwayInstruction = false;
 	float alphaLevel = 1f;
 
+	bool soundPlayed = false;
+
 	void Start(){
 		
 		initAng = transform.rotation.eulerAngles.z;
@@ -61,6 +63,13 @@ public class DoorBehaviour : MonoBehaviour {
 
 		if (isMoving) {
 			pos = Camera.main.WorldToScreenPoint (transform.position);
+
+			//play sound
+			if (!soundPlayed) {
+				//GetComponent<AudioSource> ().Play();
+				FindObjectOfType<AudioManager>().Play("Door");
+				soundPlayed = true;
+			}
 
 			if (initAng > 0f) {
 				pos = pos - Input.mousePosition;

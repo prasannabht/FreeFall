@@ -27,6 +27,7 @@ public class BallBehaviour : MonoBehaviour {
 	float max = 0.025f;
 	float wigglingSpeed = 0.25f;
 
+	bool soundPlayed = false;
 
 	void Start(){
 		ball = GetComponent<Rigidbody2D>();
@@ -38,6 +39,9 @@ public class BallBehaviour : MonoBehaviour {
 
 		if(PlayerPrefs.GetFloat ("highscore") > 20)
 			initialSpeed = 4f;
+
+		//Play theme music
+		FindObjectOfType<AudioManager>().Play("Theme");
 	}
 
 	void Update(){
@@ -59,10 +63,22 @@ public class BallBehaviour : MonoBehaviour {
 		//wiggling motion
 		transform.position =new Vector3(Mathf.PingPong(Time.time*wigglingSpeed,max-min)+min, transform.position.y, transform.position.z);
 
+		//Stop theme music
+		if (stopMoving || isPaused) {
+			FindObjectOfType<AudioManager>().Stop("Theme");
+			//FindObjectOfType<AudioManager>().Play("StartTheme");
+		}
 	}
 
 	void OnCollisionEnter2D(Collision2D ballCollider){
-				
+
+		//play sound
+		if (!soundPlayed) {
+			//GetComponent<AudioSource> ().Play();
+			FindObjectOfType<AudioManager>().Play("Collision");
+			soundPlayed = true;
+		}
+
 		stopMoving = true;
 
 		Instantiate (GameOverMenu, new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, -0.05f), Quaternion.identity);

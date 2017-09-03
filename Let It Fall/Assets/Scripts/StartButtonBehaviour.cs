@@ -12,10 +12,19 @@ public class StartButtonBehaviour : MonoBehaviour {
 
 	Transform parentObj;
 
+	bool soundPlayed = false;
+
 	void Start () {
 
 		alphaLevel = 1.0f;
 		parentObj = transform.parent.parent;
+
+		//play theme
+		if (!soundPlayed) {
+			//GetComponent<AudioSource> ().Play();
+			FindObjectOfType<AudioManager>().Play("StartTheme");
+			soundPlayed = true;
+		}
 	}
 
 	void Update(){
@@ -46,6 +55,10 @@ public class StartButtonBehaviour : MonoBehaviour {
 
 	void OnMouseDown () {
 		if (started == false) {
+
+			//Play click sound
+			FindObjectOfType<AudioManager>().Play("Click");
+
 			started = true;
 		}
 	}

@@ -13,6 +13,9 @@ public class ResumeBehaviour : MonoBehaviour {
 	void Start(){
 		pauseScript = GameObject.FindObjectOfType (typeof(PauseBehaviour)) as PauseBehaviour;
 		ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
+
+		//Play pause theme music
+		FindObjectOfType<AudioManager>().Play("StartTheme");
 	}
 
 	void Update(){
@@ -33,7 +36,15 @@ public class ResumeBehaviour : MonoBehaviour {
 	}
 
 	void OnMouseDown () {
+
+		//Play click sound
+		FindObjectOfType<AudioManager>().Play("Click");
+
 		Time.timeScale = 1;
 		isResumeClicked = true;
+
+		//Resume theme music
+		FindObjectOfType<AudioManager>().Stop("StartTheme");
+		FindObjectOfType<AudioManager>().Play("Theme");
 	}
 }

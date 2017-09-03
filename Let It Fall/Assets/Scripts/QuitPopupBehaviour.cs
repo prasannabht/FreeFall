@@ -18,6 +18,9 @@ public class QuitPopupBehaviour : MonoBehaviour {
 
 	void OnMouseDown(){
 		//if (quitClicked == false) {
+			//Play click sound
+			FindObjectOfType<AudioManager>().Play("Click");
+
 			transform.parent.parent.FindChild ("Quit").gameObject.SetActive (true);
 			transform.parent.gameObject.SetActive (false);
 			//Instantiate (QuitMenu, new Vector3 (Camera.main.transform.position.x, Camera.main.transform.position.y, -0.05f), Quaternion.identity);

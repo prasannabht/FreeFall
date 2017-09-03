@@ -16,6 +16,8 @@ public class PullyBehaviour : MonoBehaviour {
 	float initX, initY, myX, myY, distY, tempY, initSliderY, initSliderX;
 	Vector2 pos, posSlider;
 
+	bool soundPlayed = false;
+
 	// Use this for initialization
 	void Start () {
 		ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
@@ -75,12 +77,22 @@ public class PullyBehaviour : MonoBehaviour {
 	}
 
 	void OnMouseDown(){
+		soundPlayed = false;
 		distY = Camera.main.ScreenToWorldPoint (Input.mousePosition).y - this.transform.localPosition.y;
 	}
 
 	void OnMouseDrag () {
 
 		if (isMoving) {
+
+			//play sound
+			if (!soundPlayed) {
+				//GetComponent<AudioSource> ().Play();
+				FindObjectOfType<AudioManager>().Play("Pully");
+				soundPlayed = true;
+			}
+
+
 			tempY = Camera.main.ScreenToWorldPoint (new Vector2 (myX, myY)).y;
 
 			if ((tempY - distY) > minBoundary)

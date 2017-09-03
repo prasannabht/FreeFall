@@ -7,6 +7,10 @@ public class QuitBehaviour : MonoBehaviour {
 	Transform parentObj;
 
 	void OnMouseDown(){
+
+		//Play click sound
+		FindObjectOfType<AudioManager>().Play("Click");
+
 		if (gameObject.name == "Yes") {
 			Application.Quit ();
 		} else if (gameObject.name == "No") {

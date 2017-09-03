@@ -25,6 +25,10 @@ public class HomeBehaviour : MonoBehaviour {
 	}
 
 	void OnMouseDown () {
+
+		//Play click sound
+		FindObjectOfType<AudioManager>().Play("Click");
+
 		Time.timeScale = 1;
 		//Application.LoadLevel ("Level 1");
 		isHomeClicked = true;

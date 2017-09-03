@@ -12,7 +12,7 @@ public class BombBehaviour : MonoBehaviour {
 
 	bool isBombTouched = false;
 	float bombSpeed = 0.06f;
-
+	bool soundPlayed = false;
 	BallBehaviour ballScript;
 
 	// Use this for initialization
@@ -29,6 +29,13 @@ public class BombBehaviour : MonoBehaviour {
 			isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
 
 			if (isMoving) {
+
+				//play sound
+				if (!soundPlayed) {
+					//GetComponent<AudioSource> ().Play();
+					FindObjectOfType<AudioManager>().Play("Bomb");
+					soundPlayed = true;
+				}
 
 				if (transform.localScale.x > 0f) {
 					transform.localScale -= new Vector3 (bombSpeed, bombSpeed, bombSpeed);

@@ -77,6 +77,7 @@ public class SliderBehaviour : MonoBehaviour {
 		
 
 	void OnMouseDown () {
+		soundPlayed = false;
 		distX = Camera.main.ScreenToWorldPoint (Input.mousePosition).x - this.transform.localPosition.x;
 	}
 
@@ -86,7 +87,8 @@ public class SliderBehaviour : MonoBehaviour {
 
 			//play sound
 			if (!soundPlayed) {
-				GetComponent<AudioSource> ().Play();
+				//GetComponent<AudioSource> ().Play();
+				FindObjectOfType<AudioManager>().Play("Slider");
 				soundPlayed = true;
 			}
 
