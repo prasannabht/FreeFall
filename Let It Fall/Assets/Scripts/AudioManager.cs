@@ -33,12 +33,5 @@ public class AudioManager : MonoBehaviour {
 			return;
 		s.source.Stop ();
 	}
-
-	public void Slow(string name){
-		Sound s = Array.Find (sounds, sound => sound.name == name);
-		if (s == null)
-			return;
-		s.source.volume = s.source.volume / 2f;
-	}
 		
 }

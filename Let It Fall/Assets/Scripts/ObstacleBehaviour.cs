@@ -17,6 +17,8 @@ public class ObstacleBehaviour : MonoBehaviour {
 	public GameObject pullyRight;
 	public GameObject bomb2;
 	public GameObject bomb3;
+	public GameObject ropeLeft;
+	public GameObject ropeRight;
 
 	public float obstacleCount = 0;
 
@@ -38,17 +40,15 @@ public class ObstacleBehaviour : MonoBehaviour {
 	//int currObstacleOccurance=0;
 	List<string> obstacleList = new List<string> ();
 
-	//float rotaterLeftX = -0.89f;
-	//float rotateRightX = 0.89f;
 	float rotaterLeftX = -1.2f;
 	float rotateRightX = 1.2f;
 	float sliderLeftX = -1.6f;
 	float sliderRightX = 1.6f;
 	float doorLeftX = 0.0f;
 	float doorRightX = 0.0f;
-	//float stopperLeftX = -1.9f; 
 	float pullyX = 0.0f;
 	float bombX = 0f;
+	float ropeX = 0f;
 
 	float currentDistance;
 	float currentSide;
@@ -97,8 +97,10 @@ public class ObstacleBehaviour : MonoBehaviour {
 				typeNum = Random.Range (1, 5);
 			else if (obstacleCount < 25)
 				typeNum = Random.Range (1, 6);
-			else
+			else if (obstacleCount < 30)
 				typeNum = Random.Range (1, 7);
+			else
+				typeNum = Random.Range (1, 8);
 
 
 			string side = "Left";
@@ -164,6 +166,18 @@ public class ObstacleBehaviour : MonoBehaviour {
 				} else if (side == "Right") {
 					obstacle = pullyRight;
 					obstacleX = pullyX;
+				}
+				slowMo = true;
+				break;
+
+			//typeNum 7 = Rope
+			case 7:
+				if (side == "Left") {
+					obstacle = ropeLeft;
+					obstacleX = ropeX;
+				} else if (side == "Right") {
+					obstacle = ropeRight;
+					obstacleX = ropeX;
 				}
 				slowMo = true;
 				break;

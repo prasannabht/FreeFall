@@ -7,11 +7,12 @@ public class BallBehaviour : MonoBehaviour {
 
 	public float speed = 3f;
 	float initialSpeed = 3f;
-	float finalSpeed = 5f;
+
+	float finalSpeed = 6f;
 	public bool slowDown = false;
 	float slowDownTime = 4f;
 
-	bool stopMoving = false;
+	public bool stopMoving = false;
 	bool isPaused = false;
 
 	public GameObject GameOverMenu;

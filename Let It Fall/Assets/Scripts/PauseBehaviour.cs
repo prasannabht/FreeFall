@@ -35,11 +35,11 @@ public class PauseBehaviour : MonoBehaviour {
 		if (pauseClicked == false) {
 			if (ballScript.getStopMovementFlag () == false) {
 
-				//play sound
-				if (!soundPlayed) {
-					FindObjectOfType<AudioManager>().Play("StartTheme");
-					soundPlayed = true;
-				}
+//				//play sound
+//				if (!soundPlayed) {
+//					FindObjectOfType<AudioManager>().Play("StartTheme");
+//					soundPlayed = true;
+//				}
 
 				myPauseMenu = Instantiate (PauseMenu, new Vector3 (Camera.main.transform.position.x, Camera.main.transform.position.y, -0.05f), Quaternion.identity);
 
