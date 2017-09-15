@@ -17,11 +17,23 @@ public class RopeBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetMouseButtonDown (0))
+		if (Input.GetMouseButtonDown (0)) {
 			isClicked = true;
-
+		}
 		if (Input.GetMouseButtonUp (0))
 			isClicked = false;
+
+		if (fadeAwayInstruction) {
+			if (alphaLevel > 0.0f) {
+				alphaLevel -= Time.deltaTime * 5;
+				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+			}
+
+			if (alphaLevel <= 0f) {
+				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+				fadeAwayInstruction = false;
+			}
+		}
 	}
 
 	void OnMouseOver(){
@@ -40,19 +52,13 @@ public class RopeBehaviour : MonoBehaviour {
 
 			//isClicked = true;
 			transform.GetComponentInParent<RopeRotaterBehaviour> ().isRopeTouched = true;
-			Destroy (gameObject);
-		
-			if (fadeAwayInstruction) {
-				if (alphaLevel > 0.0f) {
-					alphaLevel -= Time.deltaTime * 5;
-					transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
-				}
-
-				if (alphaLevel <= 0f) {
-					transform.root.FindChild ("Instruction").gameObject.SetActive(false);
-					fadeAwayInstruction = false;
-				}
+			if (transform.root.FindChild ("Instruction").gameObject.activeSelf) {
+				fadeAwayInstruction = true;
 			}
+
+			//hide rope
+			gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, 0);
+			gameObject.GetComponent<BoxCollider2D> ().enabled = false;
 		}
 	}
 }

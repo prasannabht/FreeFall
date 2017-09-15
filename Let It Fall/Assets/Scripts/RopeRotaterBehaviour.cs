@@ -23,10 +23,10 @@ public class RopeRotaterBehaviour : MonoBehaviour {
 	void Update () {
 		if (isRopeTouched) {
 			if (initAng > 0) {
-				if (initAng < 75.0f)
+				if (initAng < 80.0f)
 					initAng += Time.deltaTime*200f;
 			} else {
-				if (initAng > -75.0f)	
+				if (initAng > -80.0f)	
 					initAng -= Time.deltaTime*200f;
 			}
 			transform.rotation = Quaternion.AngleAxis (initAng, Vector3.forward);

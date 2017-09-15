@@ -197,9 +197,9 @@ public class ObstacleBehaviour : MonoBehaviour {
 
 			if (obstacleList.Contains (currentObstacle.name) == false) {
 
-				//slow down
-				if (slowMo)
-					ballScript.slowDown = true;
+//				//slow down
+//				if (slowMo)
+//					ballScript.slowDown = true;
 
 				obstacleList.Add (currentObstacle.name);
 				displayInstructions (currentObstacle);

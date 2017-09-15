@@ -8,9 +8,9 @@ public class BallBehaviour : MonoBehaviour {
 	public float speed = 3f;
 	float initialSpeed = 3f;
 
-	float finalSpeed = 6f;
-	public bool slowDown = false;
-	float slowDownTime = 4f;
+	float finalSpeed = 7f;
+	//public bool slowDown = false;
+	//float slowDownTime = 4f;
 
 	public bool stopMoving = false;
 	bool isPaused = false;
@@ -109,10 +109,10 @@ public class BallBehaviour : MonoBehaviour {
 		return currSpeed;
 	}
 
-	IEnumerator WaitAndDisableSlowDown(){
-		yield return new WaitForSeconds (slowDownTime);
-		slowDown = false;
-		transform.FindChild ("SlowMoBackground").gameObject.SetActive (false);
-	}
+//	IEnumerator WaitAndDisableSlowDown(){
+//		yield return new WaitForSeconds (slowDownTime);
+//		slowDown = false;
+//		transform.FindChild ("SlowMoBackground").gameObject.SetActive (false);
+//	}
 		
 }
