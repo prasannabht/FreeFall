@@ -24,10 +24,10 @@ public class UpdateScoreBehaviour : MonoBehaviour {
 	public float getScore(){
 		return score;
 	}
-
-	public void setCurrentAndHighestScores(float currentScore, float highestScore){
-		//print (currentScore.ToString () + "\nScore");
-		currentScoreText.text = currentScore.ToString() + "\nScore";
-		highestScoreText.text = highestScore.ToString() + "\nHighest";
-	}
+//
+//	public void setCurrentAndHighestScores(float currentScore, float highestScore){
+//		//print (currentScore.ToString () + "\nScore");
+//		currentScoreText.text = currentScore.ToString() + "\nScore";
+//		highestScoreText.text = highestScore.ToString() + "\nHighest";
+//	}
 }

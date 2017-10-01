@@ -9,5 +9,5 @@ public class Obstacle{
 	public GameObject obstacleObj;
 
 	public float xPos;
-	public int spawnAfterScore;
+	public int priority;
 }

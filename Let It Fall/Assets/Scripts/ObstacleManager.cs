@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
 
 public class ObstacleManager : MonoBehaviour {
 
 	public Obstacle[] obstacles;
+	Obstacle[] sortedObstacles;
 	Obstacle obstacle;
+
 
 	float shiftHeight = 10.1f;
 	float startingPositionY = -6.0f;
@@ -22,7 +26,7 @@ public class ObstacleManager : MonoBehaviour {
 	int randomNum;
 
 	void Awake(){
-
+		sortedObstacles = obstacles.OrderBy(c => c.priority).ToArray();
 	}
 
 	void Start () {
@@ -33,8 +37,8 @@ public class ObstacleManager : MonoBehaviour {
 		if (firstObstacle) {
 			firstObstacle = false;
 
-			randomNum = Random.Range(0,obstacles.Length);
-			obstacle = obstacles [randomNum];
+			//randomNum = Random.Range(0,4);
+			obstacle = sortedObstacles [0];
 			currentObstacle = Instantiate (obstacle.obstacleObj, new Vector2 (obstacle.xPos, startingPositionY), Quaternion.identity);
 			obstacleList.Add (currentObstacle.name);
 			displayInstructions (currentObstacle);
@@ -50,8 +54,22 @@ public class ObstacleManager : MonoBehaviour {
 				currentDistance = level3Distance;
 			}
 
-			randomNum = Random.Range(0,obstacles.Length);
-			obstacle = obstacles [randomNum];
+			//Randomly generate obstacles based on priority
+			if (obstacleCount < 10)
+				randomNum = Random.Range (0, 4);
+			else if (obstacleCount < 15)
+				randomNum = Random.Range (0, 6);
+			else if (obstacleCount < 20)
+				randomNum = Random.Range (0, 8);
+			else if (obstacleCount < 25)
+				randomNum = Random.Range (0, 10);
+			else if (obstacleCount < 30)
+				randomNum = Random.Range (0, 12);
+			else
+				randomNum = Random.Range (0, 13);
+
+			//randomNum = Random.Range(0,obstacles.Length);
+			obstacle = sortedObstacles [randomNum];
 			currentObstacle = Instantiate (obstacle.obstacleObj, new Vector2 (obstacle.xPos, currentObstacle.transform.position.y - currentDistance), Quaternion.identity);
 
 			if (obstacleList.Contains (currentObstacle.name) == false) {

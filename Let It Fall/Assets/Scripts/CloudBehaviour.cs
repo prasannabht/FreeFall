@@ -19,7 +19,7 @@ public class CloudBehaviour : MonoBehaviour {
 	void Update () {
 		if (firstCloud) {
 			firstCloud = false;
-			currentCloud = Instantiate (clouds.FindChild("Cloud 1").gameObject, new Vector3 (-3f, startingPositionY, 0.1f), Quaternion.identity);
+			currentCloud = Instantiate (clouds.FindChild("Cloud 1").gameObject, new Vector3 (-3f, startingPositionY, 0.15f), Quaternion.identity);
 			currentCloud.transform.parent = transform;
 			currentCloud.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 		}
@@ -33,7 +33,7 @@ public class CloudBehaviour : MonoBehaviour {
 			int cloudNum = Random.Range (-6, 6);
 			float cludPos = cloudNum / 2f;
 
-			currentCloud = Instantiate (clouds.FindChild("Cloud " + sideNum).gameObject, new Vector3 (cludPos, currentCloud.transform.position.y - cloudDistance, 0.1f), Quaternion.identity);
+			currentCloud = Instantiate (clouds.FindChild("Cloud " + sideNum).gameObject, new Vector3 (cludPos, currentCloud.transform.position.y - cloudDistance, 0.15f), Quaternion.identity);
 			currentCloud.transform.parent = transform;
 			currentCloud.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 		}

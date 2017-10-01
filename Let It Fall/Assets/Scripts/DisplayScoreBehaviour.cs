@@ -17,11 +17,12 @@ public class DisplayScoreBehaviour : MonoBehaviour {
 		scoreScript = GameObject.FindObjectOfType (typeof(UpdateScoreBehaviour)) as UpdateScoreBehaviour;
 
 		currentScore = scoreScript.getScore ();
-		highestScore = PlayerPrefs.GetFloat ("highscore", highScore);
 
 		if (currentScore > PlayerPrefs.GetFloat ("highscore")) {
 			PlayerPrefs.SetFloat ("highscore", currentScore);
 		}
+
+		highestScore = PlayerPrefs.GetFloat ("highscore", highScore);
 
 		//print (currentScore.ToString () + "\nScore");
 		currentScoreText.text = currentScore.ToString() + "\nScore";

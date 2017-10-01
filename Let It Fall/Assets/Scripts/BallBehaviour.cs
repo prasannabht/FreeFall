@@ -11,8 +11,8 @@ public class BallBehaviour : MonoBehaviour {
 	float finalSpeed = 7f;
 	//public bool slowDown = false;
 	//float slowDownTime = 4f;
-
-	public bool stopMoving = false;
+	public bool dontMove = false;
+	bool stopMoving = false;
 	bool isPaused = false;
 
 	public GameObject GameOverMenu;
@@ -30,9 +30,12 @@ public class BallBehaviour : MonoBehaviour {
 
 	bool soundPlayed = false;
 
+	void Awake(){
+
+	}
+
 	void Start(){
 		ball = GetComponent<Rigidbody2D>();
-
 		pauseScript = GameObject.FindObjectOfType (typeof(PauseBehaviour)) as PauseBehaviour;
 		obstacleScript = GameObject.FindObjectOfType (typeof(ObstacleBehaviour)) as ObstacleBehaviour;
 
@@ -43,6 +46,7 @@ public class BallBehaviour : MonoBehaviour {
 
 		//Play theme music
 		FindObjectOfType<AudioManager>().Play("Theme");
+
 	}
 
 	void Update(){

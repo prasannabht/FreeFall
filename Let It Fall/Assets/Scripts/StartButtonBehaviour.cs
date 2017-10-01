@@ -14,6 +14,14 @@ public class StartButtonBehaviour : MonoBehaviour {
 
 	bool soundPlayed = false;
 
+	void Awake(){
+		//PlayerPrefs.DeleteAll ();
+		if (!PlayerPrefs.HasKey ("sound")) {
+			print ("first time");
+			PlayerPrefs.SetInt ("sound", 1);
+		}
+	}
+
 	void Start () {
 
 		alphaLevel = 1.0f;

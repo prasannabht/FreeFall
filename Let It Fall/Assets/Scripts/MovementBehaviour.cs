@@ -20,7 +20,7 @@ public class MovementBehaviour : MonoBehaviour {
 
 		currSpeed = ballScript.speed;
 
-		if (ballScript.getStopMovementFlag () == false) {
+		if (ballScript.getStopMovementFlag () == false && ballScript.dontMove == false) {
 
 			if (transform.name.Contains ("Cloud"))
 				currSpeed = currSpeed / 3;
