@@ -65,8 +65,10 @@ public class ObstacleManager : MonoBehaviour {
 				randomNum = Random.Range (0, 10);
 			else if (obstacleCount < 30)
 				randomNum = Random.Range (0, 12);
-			else
+			else if (obstacleCount < 35)
 				randomNum = Random.Range (0, 13);
+			else
+				randomNum = Random.Range (0, 15);
 
 			//randomNum = Random.Range(0,obstacles.Length);
 			obstacle = sortedObstacles [randomNum];
