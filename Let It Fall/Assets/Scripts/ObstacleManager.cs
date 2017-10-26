@@ -16,7 +16,9 @@ public class ObstacleManager : MonoBehaviour {
 	float level1Distance = 6.0f;
 	float level2Distance = 5.0f;
 	float level3Distance = 4.0f;
-	float obstacleCount = 0;
+
+	[HideInInspector]
+	public float obstacleCount = 0;
 
 	float currentDistance;
 	bool firstObstacle = true;
@@ -41,7 +43,8 @@ public class ObstacleManager : MonoBehaviour {
 			obstacle = sortedObstacles [0];
 			currentObstacle = Instantiate (obstacle.obstacleObj, new Vector2 (obstacle.xPos, startingPositionY), Quaternion.identity);
 			obstacleList.Add (currentObstacle.name);
-			displayInstructions (currentObstacle);
+			if (!currentObstacle.name.Contains ("Fake"))
+				displayInstructions (currentObstacle);
 			++obstacleCount;
 		}
 
@@ -55,34 +58,43 @@ public class ObstacleManager : MonoBehaviour {
 			}
 
 			//Randomly generate obstacles based on priority
-			if (obstacleCount < 10)
+			if (obstacleCount < 5)
 				randomNum = Random.Range (0, 4);
-			else if (obstacleCount < 15)
+			else if (obstacleCount < 10)
 				randomNum = Random.Range (0, 6);
-			else if (obstacleCount < 20)
+			else if (obstacleCount < 15)
 				randomNum = Random.Range (0, 8);
-			else if (obstacleCount < 25)
-				randomNum = Random.Range (0, 10);
-			else if (obstacleCount < 30)
+			else if (obstacleCount < 20)
 				randomNum = Random.Range (0, 12);
-			else if (obstacleCount < 35)
-				randomNum = Random.Range (0, 13);
-			else
+			else if (obstacleCount < 30)
+				randomNum = Random.Range (0, 14);
+			else if (obstacleCount < 40)
 				randomNum = Random.Range (0, 15);
+			else if (obstacleCount < 50)
+				randomNum = Random.Range (0, 17);
+			else if (obstacleCount < 60)
+				randomNum = Random.Range (0, 21);
+			else if (obstacleCount < 70)
+				randomNum = Random.Range (0, 23);
+			else
+				randomNum = Random.Range (0, 25);
 
 			//randomNum = Random.Range(0,obstacles.Length);
 			obstacle = sortedObstacles [randomNum];
 			currentObstacle = Instantiate (obstacle.obstacleObj, new Vector2 (obstacle.xPos, currentObstacle.transform.position.y - currentDistance), Quaternion.identity);
 
-			if (obstacleList.Contains (currentObstacle.name) == false) {
-				obstacleList.Add (currentObstacle.name);
-				displayInstructions (currentObstacle);
-			} else if (obstacleList.Contains (currentObstacle.name + "_1") == false) {
-				obstacleList.Add (currentObstacle.name + "_1");
-				displayInstructions (currentObstacle);
-			}
 
-			++obstacleCount;
+				if (obstacleList.Contains (currentObstacle.name) == false) {
+					obstacleList.Add (currentObstacle.name);
+					if (!currentObstacle.name.Contains ("Fake"))
+						displayInstructions (currentObstacle);
+				} else if (obstacleList.Contains (currentObstacle.name + "_1") == false) {
+					obstacleList.Add (currentObstacle.name + "_1");
+					if (!currentObstacle.name.Contains ("Fake"))
+						displayInstructions (currentObstacle);
+				}
+
+				++obstacleCount;
 		}
 	}
 

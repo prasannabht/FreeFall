@@ -8,7 +8,7 @@ public class BallBehaviour : MonoBehaviour {
 	public float speed = 3f;
 	float initialSpeed = 3f;
 
-	float finalSpeed = 7f;
+	float finalSpeed = 6f;
 	//public bool slowDown = false;
 	//float slowDownTime = 4f;
 	public bool dontMove = false;
@@ -19,7 +19,7 @@ public class BallBehaviour : MonoBehaviour {
 	public GameObject QuitMenu;
 
 	PauseBehaviour pauseScript;
-	ObstacleBehaviour obstacleScript;
+	ObstacleManager obstacleScript;
 
 	float currentScore;
 	Vector2 pos;
@@ -37,7 +37,7 @@ public class BallBehaviour : MonoBehaviour {
 	void Start(){
 		ball = GetComponent<Rigidbody2D>();
 		pauseScript = GameObject.FindObjectOfType (typeof(PauseBehaviour)) as PauseBehaviour;
-		obstacleScript = GameObject.FindObjectOfType (typeof(ObstacleBehaviour)) as ObstacleBehaviour;
+		obstacleScript = GameObject.FindObjectOfType (typeof(ObstacleManager)) as ObstacleManager;
 
 		PlayerPrefs.SetInt ("isMoving", 1);
 
@@ -105,7 +105,7 @@ public class BallBehaviour : MonoBehaviour {
 
 	float IncreaseSpeed(float obstacleCount) {
 		float currSpeed;
-		currSpeed = initialSpeed + obstacleCount * 0.05f;
+		currSpeed = initialSpeed + obstacleCount * 0.01f;
 
 		if (currSpeed > finalSpeed)
 			currSpeed = finalSpeed;

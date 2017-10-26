@@ -51,8 +51,9 @@ public class StartButtonBehaviour : MonoBehaviour {
 
 			if(screen.y > 0.75f){
 				started = false;
-				Destroy (gameObject);
-				Application.LoadLevel ("Level 2");
+				//Destroy (gameObject);
+				//Application.LoadLevel ("Level 2");
+				LoadManager.Load ("Level 2");
 			}
 		}
 
