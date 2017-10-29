@@ -16,8 +16,8 @@ public class CommonFunctions : MonoBehaviour {
 		}
 		if (currAngle > initAngle)
 			floorVal = floorVal + 90;
-		print ("Init Ang: " + initAngle + "  Curr Ang: " + currAngle);
-		print ("Next Stop: " + floorVal);
+//		print ("Init Ang: " + initAngle + "  Curr Ang: " + currAngle);
+//		print ("Next Stop: " + floorVal);
 		return floorVal;
 	}
 

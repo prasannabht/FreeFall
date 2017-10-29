@@ -17,8 +17,7 @@ public class ObstacleManager : MonoBehaviour {
 	float level2Distance = 5.0f;
 	float level3Distance = 4.0f;
 
-	[HideInInspector]
-	public float obstacleCount = 0;
+	float obstacleCount = 0;
 
 	float currentDistance;
 	bool firstObstacle = true;
@@ -46,6 +45,7 @@ public class ObstacleManager : MonoBehaviour {
 			if (!currentObstacle.name.Contains ("Fake"))
 				displayInstructions (currentObstacle);
 			++obstacleCount;
+			GameManager.SetObstacleCount (obstacleCount);
 		}
 
 		if (currentObstacle.transform.position.y - currentDistance > Camera.main.transform.position.y - shiftHeight / 2) {

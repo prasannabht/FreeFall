@@ -5,21 +5,21 @@ using UnityEngine.UI;
 
 public class UpdateScoreBehaviour : MonoBehaviour {
 
-	public Text scoreText;
+//	public Text scoreText;
+//
+//	public Text currentScoreText;
+//	public Text highestScoreText;
 
-	public Text currentScoreText;
-	public Text highestScoreText;
-
-	float score;
+	static float score;
 
 	void Start () {
 		score = 0;
 	}
 
-	public void updateScore (int scoreIncrement){
-		score += scoreIncrement;
-		scoreText.text = "" + score;
-	}
+//	public static void updateScore (int scoreIncrement){
+//		score += scoreIncrement;
+//		scoreText.text = "" + score;
+//	}
 
 	public float getScore(){
 		return score;

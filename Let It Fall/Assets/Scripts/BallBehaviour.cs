@@ -5,13 +5,13 @@ public class BallBehaviour : MonoBehaviour {
 
 	Rigidbody2D ball;
 
-	public float speed = 3f;
-	float initialSpeed = 3f;
+	//public float speed = 3f;
+	//float initialSpeed = 3f;
 
-	float finalSpeed = 6f;
+	//float finalSpeed = 6f;
 	//public bool slowDown = false;
 	//float slowDownTime = 4f;
-	public bool dontMove = false;
+	//public bool dontMove = false;
 	bool stopMoving = false;
 	bool isPaused = false;
 
@@ -20,6 +20,7 @@ public class BallBehaviour : MonoBehaviour {
 
 	PauseBehaviour pauseScript;
 	ObstacleManager obstacleScript;
+	StartButtonBehaviour startButtonScript;
 
 	float currentScore;
 	Vector2 pos;
@@ -38,25 +39,29 @@ public class BallBehaviour : MonoBehaviour {
 		ball = GetComponent<Rigidbody2D>();
 		pauseScript = GameObject.FindObjectOfType (typeof(PauseBehaviour)) as PauseBehaviour;
 		obstacleScript = GameObject.FindObjectOfType (typeof(ObstacleManager)) as ObstacleManager;
+		startButtonScript = GameObject.FindObjectOfType (typeof(StartButtonBehaviour)) as StartButtonBehaviour;
 
-		PlayerPrefs.SetInt ("isMoving", 1);
+		//PlayerPrefs.SetInt ("isMoving", 1);
 
-		if(PlayerPrefs.GetFloat ("highscore") > 20)
-			initialSpeed = 4f;
+//		if(PlayerPrefs.GetFloat ("highscore") > 20)
+//			initialSpeed = 4f;
 
-		//Play theme music
-		FindObjectOfType<AudioManager>().Play("Theme");
+//		//Play theme music
+//		FindObjectOfType<AudioManager>().Play("Theme");
 
 	}
 
 	void Update(){
+		
+		//PlayerPrefs.SetInt ("isMoving", 1);
+
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			pauseScript.pauseGame();
 		}
 
-		//update speed
-		if (speed < finalSpeed)
-			speed = IncreaseSpeed(obstacleScript.obstacleCount);
+//		//update speed
+//		if (speed < finalSpeed)
+//			speed = IncreaseSpeed(obstacleScript.obstacleCount);
 
 //		if (slowDown) {
 //			//print ("Slow Down");
@@ -66,7 +71,8 @@ public class BallBehaviour : MonoBehaviour {
 //		}
 
 		//wiggling motion
-		transform.position =new Vector3(Mathf.PingPong(Time.time*wigglingSpeed,max-min)+min, transform.position.y, transform.position.z);
+		if (GameManager.IsBallFalling())
+			transform.position =new Vector3(Mathf.PingPong(Time.time*wigglingSpeed,max-min)+min, transform.position.y, transform.position.z);
 
 		//Stop theme music
 		if (stopMoving || isPaused) {
@@ -85,9 +91,10 @@ public class BallBehaviour : MonoBehaviour {
 		}
 
 		stopMoving = true;
+		FindObjectOfType<GameManager>().collisionFlag = true;
 
-		Instantiate (GameOverMenu, new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, -0.05f), Quaternion.identity);
-		Time.timeScale = 0;
+		//Instantiate (GameOverMenu, new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y, -0.05f), Quaternion.identity);
+		//Time.timeScale = 0;
 
 	}
 
@@ -103,15 +110,15 @@ public class BallBehaviour : MonoBehaviour {
 		isPaused = isPausedFlag;
 	}
 
-	float IncreaseSpeed(float obstacleCount) {
-		float currSpeed;
-		currSpeed = initialSpeed + obstacleCount * 0.01f;
-
-		if (currSpeed > finalSpeed)
-			currSpeed = finalSpeed;
-
-		return currSpeed;
-	}
+//	float IncreaseSpeed(float obstacleCount) {
+//		float currSpeed;
+//		currSpeed = initialSpeed + obstacleCount * 0.01f;
+//
+//		if (currSpeed > finalSpeed)
+//			currSpeed = finalSpeed;
+//
+//		return currSpeed;
+//	}
 
 //	IEnumerator WaitAndDisableSlowDown(){
 //		yield return new WaitForSeconds (slowDownTime);

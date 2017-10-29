@@ -6,7 +6,8 @@ public class StartButtonBehaviour : MonoBehaviour {
 
 	public GameObject QuitMenu;
 
-	bool started = false;
+	[HideInInspector]
+	public bool startButtonClicked = false;
 	float alphaLevel;
 	Vector3 screen;
 
@@ -36,7 +37,8 @@ public class StartButtonBehaviour : MonoBehaviour {
 	}
 
 	void Update(){
-		if (started == true) {
+		print (startButtonClicked);
+		if (startButtonClicked == true) {
 			if (alphaLevel > 0.0f)
 				alphaLevel -= Time.deltaTime * 3;
 			//gameObject.GetComponent<SpriteRenderer> ().color = new Color (1f, 1f, 1f, alphaLevel);
@@ -50,8 +52,8 @@ public class StartButtonBehaviour : MonoBehaviour {
 			screen = Camera.main.WorldToViewportPoint (parentObj.position);
 
 			if(screen.y > 0.75f){
-				started = false;
-				//Destroy (gameObject);
+				startButtonClicked = false;
+				Destroy (gameObject);
 				//Application.LoadLevel ("Level 2");
 				LoadManager.Load ("Level 2");
 			}
@@ -63,12 +65,11 @@ public class StartButtonBehaviour : MonoBehaviour {
 	}
 
 	void OnMouseDown () {
-		if (started == false) {
+		if (startButtonClicked == false) {
 
 			//Play click sound
 			FindObjectOfType<AudioManager>().Play("Click");
-
-			started = true;
+			startButtonClicked = true;
 		}
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LoadManager : MonoBehaviour {
+
 	public static void Load (string name){
 		GameObject go = new GameObject ("LoadManager");
 		LoadManager instance = go.AddComponent<LoadManager> ();
@@ -13,7 +14,7 @@ public class LoadManager : MonoBehaviour {
 		Object.DontDestroyOnLoad (this.gameObject);
 		Application.LoadLevel ("Loading Level");
 		yield return null;
-
+		print ("Loading");
 		Application.LoadLevel (name);
 		Destroy (this.gameObject);
 	}

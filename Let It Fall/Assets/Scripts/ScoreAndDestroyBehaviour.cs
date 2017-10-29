@@ -12,24 +12,24 @@ public class ScoreAndDestroyBehaviour : MonoBehaviour {
 
 	void Start(){
 		ball = GameObject.Find ("Ball");
-		scoreObject = GameObject.Find ("GameController");
+		scoreObject = GameObject.Find ("ScoreManager");
 		ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
 	}
 
-	// Update is called once per frame
-	void Update () {
-		if(!hasCrossed){
-			if (transform.position.y > ball.transform.position.y) {
-				hasCrossed = true;
-				++score;
-				//ballScript.slowDown = false;
-				scoreObject.GetComponent<UpdateScoreBehaviour> ().updateScore (1);
-			}
-		}
-
-		if (transform.position.y > ball.transform.position.y + 2.0f) {
-			Destroy (gameObject);
-
-		}
-	}
+//	// Update is called once per frame
+//	void Update () {
+//		if(!hasCrossed){
+//			if (transform.position.y > ball.transform.position.y) {
+//				hasCrossed = true;
+//				++score;
+//				//ballScript.slowDown = false;
+//				scoreObject.GetComponent<UpdateScoreBehaviour> ().updateScore (1);
+//			}
+//		}
+//
+//		if (transform.position.y > ball.transform.position.y + 2.0f) {
+//			Destroy (gameObject);
+//
+//		}
+//	}
 }
