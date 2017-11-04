@@ -6,7 +6,7 @@ public class BallTailBehaviour : MonoBehaviour {
 
 	Vector3 size;
 	float initYSize;
-	BallBehaviour ballScript;
+	//BallBehaviour ballScript;
 
 	float moveSpeed = 30f;
 	float rot = 5f;
@@ -18,12 +18,12 @@ public class BallTailBehaviour : MonoBehaviour {
 		size.y = 0.0f;
 		transform.localScale = size;
 
-		ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
+		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
 	}
 	
 
 	void Update () {
-		if (ballScript.getStopMovementFlag () == false) {
+		if (GameManager.IsBallFalling() || !UIManager.GameStarted()) {
 			if (transform.localScale.y < initYSize) {
 				size.y += Time.deltaTime;
 				transform.localScale = size;
@@ -33,13 +33,13 @@ public class BallTailBehaviour : MonoBehaviour {
 
 		}
 
-		if (ballScript.getStopMovementFlag () == true) {
+		if (!GameManager.IsBallFalling() && UIManager.GameStarted()) {
 			
 			if (transform.localScale.y > 0.0f) {
 				size.y -= Time.deltaTime * 4;
 				transform.localScale = size;
 			}
-		}
+		} 
 
 
 	}

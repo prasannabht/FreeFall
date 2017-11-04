@@ -8,7 +8,9 @@ public class CloudBehaviour : MonoBehaviour {
 	bool firstCloud = true;
 	GameObject currentCloud;
 	float cloudDistance = 14f;
-	float alphaLevel = 0.15f;
+	//float topYpos = 6f;
+	float cloudSpeed;
+	float alphaLevel = 0.1f;
 	public Transform clouds;
 	// Use this for initialization
 	void Start () {
@@ -24,6 +26,11 @@ public class CloudBehaviour : MonoBehaviour {
 			currentCloud.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 		}
 
+		cloudSpeed = GameManager.GetSpeed() / 3;
+		if (GameManager.IsBallFalling()) {
+			currentCloud.transform.Translate (0, Time.deltaTime * cloudSpeed, 0);
+		}
+
 		//if (currentCloud.transform.position.y - cloudDistance > Camera.main.transform.position.y - shiftHeight / 2) {
 		if (currentCloud.transform.position.y - startingPositionY > cloudDistance) {
 
@@ -37,6 +44,7 @@ public class CloudBehaviour : MonoBehaviour {
 			currentCloud.transform.parent = transform;
 			currentCloud.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 		}
+
 
 	}
 }

@@ -7,10 +7,10 @@ public class PunchBehaviour : MonoBehaviour {
 	Vector3 pos;
 	float ang;
 	float initAngle;
-	BallBehaviour ballScript;
+	//BallBehaviour ballScript;
 	Transform puncher;
 	bool autoMove = false;
-	bool isMoving = true;
+	//bool isMoving = true;
 	//bool isClicked = false;
 	bool fadeAwayInstruction = false;
 	float alphaLevel = 1f;
@@ -27,7 +27,7 @@ public class PunchBehaviour : MonoBehaviour {
 	bool isNextStopDefined = false;
 
 	void Start () {
-		ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
+		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
 		puncher = transform.FindChild ("Puncher");
 		initAngle = transform.rotation.eulerAngles.z;
 		if (initAngle >= 180)
@@ -40,12 +40,12 @@ public class PunchBehaviour : MonoBehaviour {
 	void Update () {
 
 		//determine if game is stopped or paused
-		isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
+		//isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
 
 		fraction = Mathf.Sin(Time.time * puncherSpeed);
 		puncher.localPosition = Vector3.Lerp (minPos, maxPos, fraction);
 
-		if (autoMove && isMoving) {
+		if (autoMove && GameManager.IsBallFalling()) {
 			if (!isNextStopDefined) {
 				//print ("currAng: " + ang);
 				nextStop = CommonFunctions.FindNextStop (initAngle, ang);
@@ -75,25 +75,25 @@ public class PunchBehaviour : MonoBehaviour {
 				
 			transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
 
+			if (fadeAwayInstruction) {
+				if (alphaLevel > 0.0f) {
+					alphaLevel -= Time.deltaTime * 5;
+					transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+				}
 
-		}
-
-		if (fadeAwayInstruction) {
-			if (alphaLevel > 0.0f) {
-				alphaLevel -= Time.deltaTime * 5;
-				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
-			}
-
-			if (alphaLevel <= 0f) {
-				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
-				fadeAwayInstruction = false;
+				if (alphaLevel <= 0f) {
+					transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+					fadeAwayInstruction = false;
+				}
 			}
 		}
+
+
 	}
 
 	void OnMouseDrag () {
 
-		if (isMoving) {
+		if (GameManager.IsBallFalling()) {
 
 			//play sound
 			if (!soundPlayed) {

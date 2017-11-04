@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: e6fccfa7c4b7c7b4da7947b6aa78904a
+timeCreated: 1509274919
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Abel
+  fontNames:
+  - Abel
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BombBehaviour : MonoBehaviour {
 
-	bool isMoving = true;
+	//bool isMoving = true;
 	bool fadeAwayInstruction = false;
 	float alphaLevel = 1f;
 	float bombAlphaLevel = 1f;
@@ -13,11 +13,11 @@ public class BombBehaviour : MonoBehaviour {
 	bool isBombTouched = false;
 	float bombSpeed = 0.06f;
 	bool soundPlayed = false;
-	BallBehaviour ballScript;
+	//BallBehaviour ballScript;
 
 	// Use this for initialization
 	void Start () {
-		ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
+		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
 
 	}
 	
@@ -26,9 +26,9 @@ public class BombBehaviour : MonoBehaviour {
 
 		if (isBombTouched) {
 			//determine if game is stopped or paused
-			isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
+			//isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
 
-			if (isMoving) {
+			if (GameManager.IsBallFalling()) {
 
 				//play sound
 				if (!soundPlayed) {

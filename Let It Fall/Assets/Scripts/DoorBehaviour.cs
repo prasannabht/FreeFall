@@ -9,8 +9,8 @@ public class DoorBehaviour : MonoBehaviour {
 	float initAng;
 	float angAbs;
 	bool autoMove = false;
-	bool isMoving = true;
-	BallBehaviour ballScript;
+	//bool isMoving = true;
+	//BallBehaviour ballScript;
 
 	bool fadeAwayInstruction = false;
 	float alphaLevel = 1f;
@@ -24,14 +24,14 @@ public class DoorBehaviour : MonoBehaviour {
 		if (initAng > 180f) {
 			initAng = initAng - 360;
 		}
-		ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
+		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
 	}
 
 	void Update(){
 		//determine if game is stopped or paused
-		isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
+		//isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
 
-		if (autoMove && isMoving) {
+		if (autoMove && GameManager.IsBallFalling()) {
 			if (initAng > 0) {
 				if (ang < 170.0f)
 					ang += Time.deltaTime*300f;
@@ -44,24 +44,24 @@ public class DoorBehaviour : MonoBehaviour {
 					autoMove = false;
 			}
 			transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
-		}
 
-		if (fadeAwayInstruction) {
-			if (alphaLevel > 0.0f) {
-				alphaLevel -= Time.deltaTime * 5;
-				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
-			}
+			if (fadeAwayInstruction) {
+				if (alphaLevel > 0.0f) {
+					alphaLevel -= Time.deltaTime * 5;
+					transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+				}
 
-			if (alphaLevel <= 0f) {
-				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
-				fadeAwayInstruction = false;
+				if (alphaLevel <= 0f) {
+					transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+					fadeAwayInstruction = false;
+				}
 			}
 		}
 	}
 
 	void OnMouseDrag () {
 
-		if (isMoving) {
+		if (GameManager.IsBallFalling()) {
 			pos = Camera.main.WorldToScreenPoint (transform.position);
 
 			//play sound

@@ -7,7 +7,7 @@ public class RotateSlideBegaviour : MonoBehaviour {
 	Vector3 pos;
 
 	bool hasRotated = false;
-	bool isMoving = true;
+	//bool isMoving = true;
 	bool autoMove = false;
 	bool autoSlide = false;
 	bool soundPlayed = false;
@@ -26,10 +26,10 @@ public class RotateSlideBegaviour : MonoBehaviour {
 	float alphaLevel = 1f;
 
 	float ang;
-	BallBehaviour ballScript;
+	//BallBehaviour ballScript;
 
 	void Start () {
-		ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
+		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
 		initY = this.transform.localPosition.y;
 		initX = this.transform.localPosition.x;
 		initZ = this.transform.localPosition.z;
@@ -39,7 +39,7 @@ public class RotateSlideBegaviour : MonoBehaviour {
 		myX = Input.mousePosition.x;
 		myY = Input.mousePosition.y;
 		//determine if game is stopped or paused
-		isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
+		//isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
 
 		if (autoMove) {
 			//print (ang);
@@ -69,7 +69,7 @@ public class RotateSlideBegaviour : MonoBehaviour {
 			}
 
 			//print (ang);
-			if (isMoving) {
+			if (GameManager.IsBallFalling()) {
 				transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
 			}
 		}
@@ -100,7 +100,7 @@ public class RotateSlideBegaviour : MonoBehaviour {
 
 		}
 
-		if (fadeAwayInstruction) {
+		if (fadeAwayInstruction && GameManager.IsBallFalling()) {
 			if (alphaLevel > 0.0f) {
 				alphaLevel -= Time.deltaTime * 5;
 				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
@@ -121,7 +121,7 @@ public class RotateSlideBegaviour : MonoBehaviour {
 
 	void OnMouseDrag () {
 
-		if (isMoving && !hasRotated) {
+		if (GameManager.IsBallFalling() && !hasRotated) {
 
 			//play sound
 			if (!soundPlayed) {
@@ -149,7 +149,7 @@ public class RotateSlideBegaviour : MonoBehaviour {
 			transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
 		}
 
-		if (isMoving && hasRotated && !autoSlide) {
+		if (GameManager.IsBallFalling() && hasRotated && !autoSlide) {
 			
 			tempX = Camera.main.ScreenToWorldPoint (new Vector2 (myX, myY)).x;
 			tempX = (tempX - distX);

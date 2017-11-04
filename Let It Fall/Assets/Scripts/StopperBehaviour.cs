@@ -5,9 +5,9 @@ using UnityEngine;
 public class StopperBehaviour : MonoBehaviour {
 
 	bool autoMove = false;
-	bool isMoving = true;
+	//bool isMoving = true;
 	bool hasCollided = false;
-	BallBehaviour ballScript;
+	//BallBehaviour ballScript;
 	bool fadeAwayInstruction = false;
 	float alphaLevel = 1f;
 
@@ -17,7 +17,7 @@ public class StopperBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
+		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
 		initX = transform.localPosition.x;
 		initY = transform.localPosition.y;
 		if (initX < 0) {
@@ -33,9 +33,9 @@ public class StopperBehaviour : MonoBehaviour {
 
 		//print (transform.localPosition.x);
 		//determine if game is stopped or paused
-		isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag () && !hasCollided;
+		//isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag () && !hasCollided;
 
-		if (autoMove && isMoving) {
+		if (autoMove && GameManager.IsBallFalling()) {
 			pos.y = initY;
 
 			if (initX < 0f){ 
@@ -47,20 +47,20 @@ public class StopperBehaviour : MonoBehaviour {
 				}
 				transform.localPosition = (pos);
 			}
+			if (fadeAwayInstruction) {
+				if (alphaLevel > 0.0f) {
+					alphaLevel -= Time.deltaTime * 5;
+					transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+				}
 
-		}
-
-		if (fadeAwayInstruction) {
-			if (alphaLevel > 0.0f) {
-				alphaLevel -= Time.deltaTime * 5;
-				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
-			}
-
-			if (alphaLevel <= 0f) {
-				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
-				fadeAwayInstruction = false;
+				if (alphaLevel <= 0f) {
+					transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+					fadeAwayInstruction = false;
+				}
 			}
 		}
+
+
 	}
 
 	void OnMouseDown(){
@@ -69,7 +69,7 @@ public class StopperBehaviour : MonoBehaviour {
 
 	void OnMouseDrag () {
 
-		if (isMoving) {
+		if (GameManager.IsBallFalling()) {
 			tempX = Camera.main.ScreenToWorldPoint (new Vector2 (myX, myY)).x;
 
 			if(initX < 0f && (tempX - distX) > minBoundary){

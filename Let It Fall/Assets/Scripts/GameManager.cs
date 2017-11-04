@@ -14,25 +14,37 @@ public class GameManager : MonoBehaviour {
 	public Text currentScoreText;
 	public Text highestScoreText;
 
+	[HideInInspector]
 	public bool collisionFlag = false;
-	static float score = 0;
-	static float highestScore;
+	float score;
+	float highestScore;
 	public static float highScore;
-	static float obstacleCount=0;
+	//static float obstacleCount=0;
 	static float speed;
 	static bool ballFallingFlag = false;
 	static bool tempVar;
 
+	public static float leftX;
+	public static float rightX;
+	public static float topY;
+	public static float bottomY;
+
+
 	void Awake (){
-		DontDestroyOnLoad (this);
+	//	DontDestroyOnLoad (this);
+	//	scoreTextTemp = scoreText;
+
+	//	DisplayScore ();
 	}
 
 	void Start () {
-		print ("Score: " + score);
-		print ("HighScore: " + highestScore);
-		DisplayScore ();
 
+		leftX = Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width * 0, 0, 0)).x;
+		rightX = Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width * 1, 0, 0)).x;
+		topY = Camera.main.ScreenToWorldPoint (new Vector3 (0, Screen.height * 1, 0)).y;
+		bottomY = Camera.main.ScreenToWorldPoint (new Vector3 (0, Screen.height * 0, 0)).y;
 
+		score = 0;
 		tempVar = dontMove;
 
 		if(PlayerPrefs.GetFloat ("highscore") > 20)
@@ -48,15 +60,21 @@ public class GameManager : MonoBehaviour {
 	void Update () {
 		//update speed
 		if (speed < finalSpeed)
-			speed = IncreaseSpeed(obstacleCount);
+			speed = IncreaseSpeed(FindObjectOfType<ObstacleManager> ().obstacleCount);
 
 		if (collisionFlag) {
+			DisplayScore ();
+			score = 0;
+			scoreText.text = "" + score;
 			SetBallFallingFlag (false);
 			//FindObjectOfType<ButtonBehaviour>().GameOverScreen();
-
+			FindObjectOfType<UIManager>().GameOver();
+			//Application.LoadLevel("Level 2");
 			//collisionFlag = false;
+//			FindObjectOfType<ObstacleManager> ().ResetObstacles();
+//			DisplayScore ();
+
 			collisionFlag = false;
-			Application.LoadLevel("Level 2");
 		}
 	}
 
@@ -65,32 +83,35 @@ public class GameManager : MonoBehaviour {
 		scoreText.text = "" + score;
 	}
 
-	void DisplayScore(){
+	public void DisplayScore(){
 		if (score > PlayerPrefs.GetFloat ("highscore")) {
 			PlayerPrefs.SetFloat ("highscore", score);
 		}
 
 		highestScore = PlayerPrefs.GetFloat ("highscore", highScore);
 
-		//print (currentScore.ToString () + "\nScore");
-		currentScoreText.text = score.ToString() + "\nScore";
-		highestScoreText.text = highestScore.ToString() + "\nHighest";
+		currentScoreText.text = score.ToString() + "\nSCORE";
+		highestScoreText.text = highestScore.ToString() + "\nHIGHEST";
 	}
 
 	public static void SetBallFallingFlag(bool flag){
 		ballFallingFlag = flag;
 	}
 	public static bool IsBallFalling(){
+		return ballFallingFlag;
+	}
+
+	public static bool StopMovement(){
 		return ballFallingFlag && !tempVar;
 	}
 
 
-	public static void SetObstacleCount(float count){
-		obstacleCount = count;
-	}
-	public static float GetObstacleCount(){
-		return obstacleCount;
-	}
+//	public static void SetObstacleCount(float count){
+//		obstacleCount = count;
+//	}
+//	public static float GetObstacleCount(){
+//		return obstacleCount;
+//	}
 
 
 	public static float GetSpeed(){

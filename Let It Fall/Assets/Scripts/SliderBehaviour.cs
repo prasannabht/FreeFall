@@ -10,7 +10,7 @@ public class SliderBehaviour : MonoBehaviour {
 	float initX;
 	Vector2 pos;
 	bool autoMove = false;
-	bool isMoving = true;
+	//bool isMoving = true;
 	bool fadeAwayInstruction = false;
 	float alphaLevel = 1f;
 
@@ -21,11 +21,11 @@ public class SliderBehaviour : MonoBehaviour {
 
 	bool soundPlayed = false;
 
-	BallBehaviour ballScript;
+	//BallBehaviour ballScript;
 
 	void Start () {
 
-		ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
+		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
 		
 		initY = this.transform.localPosition.y;
 		initX = this.transform.localPosition.x;
@@ -38,9 +38,9 @@ public class SliderBehaviour : MonoBehaviour {
 		myY = Input.mousePosition.y;
 
 		//determine if game is stopped or paused
-		isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
+		//isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
 
-		if (autoMove && isMoving){
+		if (autoMove && GameManager.IsBallFalling()){
 
 			pos.y = initY;
 
@@ -59,20 +59,20 @@ public class SliderBehaviour : MonoBehaviour {
 					autoMove = false;
 				}
 			}
+			if (fadeAwayInstruction) {
+				if (alphaLevel > 0.0f) {
+					alphaLevel -= Time.deltaTime * 5;
+					transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+				}
 
-		}
-
-		if (fadeAwayInstruction) {
-			if (alphaLevel > 0.0f) {
-				alphaLevel -= Time.deltaTime * 5;
-				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
-			}
-
-			if (alphaLevel <= 0f) {
-				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
-				fadeAwayInstruction = false;
+				if (alphaLevel <= 0f) {
+					transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+					fadeAwayInstruction = false;
+				}
 			}
 		}
+
+
 	}
 		
 
@@ -83,7 +83,7 @@ public class SliderBehaviour : MonoBehaviour {
 
 	void OnMouseDrag () {
 			
-		if (isMoving) {
+		if (GameManager.IsBallFalling()) {
 
 			//play sound
 			if (!soundPlayed) {

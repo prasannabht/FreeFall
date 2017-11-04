@@ -5,37 +5,119 @@ using UnityEngine.UI;
 
 public class ButtonBehaviour : MonoBehaviour {
 	//Object references for buttons
-	public GameObject StartButton;
-	public GameObject SoundButton;
-	public GameObject ShareButton;
+	public GameObject StartScreenButtons;
+
+	public GameObject Title;
 	public GameObject PauseButton;
 	public GameObject ScoreText;
 	public GameObject StartBackground;
-	public GameObject LineShadow;
 
 	public GameObject CurrentScore;
 	public GameObject HighestScore;
 
-	static bool StartScreenTransition = false;
-	bool GameOverTransition = false;
-	float transitionSpeed = 15;
+	public GameObject QuitScreen;
+
+	GameManager myGameManager;
+
+	float EndOfScreen = -8.5f;
+
+	bool firstHomeScreenTransition = false;
+	bool firstFrameHomeScreenTransition = true;
+	bool firstHomeScreenTransitionCompleted = false;
+	bool quitScreenTransition = false;
+	bool firstFrameQuitScreenTransition = true;
+	bool quitScreenTransitionCompleted = false;
+
+	bool homeScreenTransition = false;
+	bool homeScreenTransitionCompleted = false;
+
+	bool PauseTransitionFlag = false;
+	bool isPaused = false;
+	bool GameOverTransitionFlag = false;
+
+	//bool ResetQuitGameTransitionFlag = false;
+	float transitionSpeed = 20;
+	float StartTransitionSpeed = 15;
 	float alphaLevel = 1;
+	float quitAlphaLevel = 1;
 	Vector3 screen;
 
-	Vector3 StartButtonInitPos;
-	Vector3 SoundButtonInitPos;
-	Vector3 ShareButtonInitPos;
-	Vector3 LineShadowInitPos;
-	Vector3 CurrentScoreInitPos;
-	Vector3 HighestScoreInitPos;
+	Vector3 StartScreenButtonsInitPos;
+	Vector3 QuitScreenInitPos;
 
+	float StartBackgroundAlpha;
+	bool resetFirstFrameFlag = true;
+//	bool quitScreenFirstFrameFlag = true;
+	bool initStartScreenflag;
+//	bool isFirstStart = true;
+	bool isObstaclesReset = false;
+
+	string PreviousScreen;
+	//static float RestartCount = 0;
+
+	//Custom functions
 	public void fnStartGameButton () {
 		print ("start game");
-		StartScreenTransition = true;
+		//isObstaclesReset = false;
+		//TitleScreenTransition= true;
+
+		//print ("First Start: " + isFirstStart);
+		//print ("Obstacles Reset: " + isObstaclesReset);
+		//print ("Paused: " + isPaused);
+		//if (!isFirstStart && !isObstaclesReset && !isPaused) {
+		//	FindObjectOfType<ObstacleManager> ().ResetObstacles();
+		//	isObstaclesReset = true;
+		//}
+
+		//if (TitleScreenTransitionCompleted) {
+		//	GameManager.SetBallFallingFlag (true);
+//			TitleScreenTransitionCompleted = false;
+//			isFirstStart = false;
+//			if (isPaused)
+//				isPaused = false;
+//
+//		}
 	}
 
 	public void fnPauseGameButton(){
-		print ("pause game");
+//		print ("pause game");
+//		GameManager.SetBallFallingFlag (false);
+//		myGameManager.DisplayScore ();
+//		PauseTransitionFlag = true;
+//		isPaused = true;
+//		PreviousScreen = "Pause";
+	}
+
+	public void fnQuitGameScreen(){
+		if (!QuitScreen.activeSelf) {
+			print ("quit screen transition");
+			quitScreenTransition = true;
+		} else {
+			print ("Exit game");
+			Application.Quit ();
+		}
+	}
+
+	public void fnQuitYesButton(){
+//		print ("Exit game");
+//		Application.Quit ();
+	}
+
+	public void fnQuitNoButton(){
+//		resetFirstFrameFlag = true;
+//		quitAlphaLevel = 1;
+//		ResetQuitGameTransitionFlag = true;
+//
+//		print ("Previous Screen: " + PreviousScreen);
+//		if (PreviousScreen == "Start") {
+//			isFirstStart = true;
+//			resetFirstFrameFlag = true;
+//			ResetScreenTransition ();
+//		} else if (PreviousScreen == "Pause") {
+//			fnPauseGameButton ();
+//		} else if (PreviousScreen == "GameOver") {
+//			GameOverScreen ();
+//		}
 	}
 
 	public void fnSoundButton(){
@@ -46,99 +128,342 @@ public class ButtonBehaviour : MonoBehaviour {
 		print ("share");
 	}
 
-	void StartGame(){
-		GameManager.SetBallFallingFlag (true);
-	}
-
 	public void GameOverScreen(){
-		GameOverTransition = true;
-	}
-
-	void ResetStartScreenButtons(){
-		StartButton.SetActive(true);
-		SoundButton.SetActive(true);
-		ShareButton.SetActive(true);
-		LineShadow.SetActive (true);
-		CurrentScore.SetActive (true);
-		HighestScore.SetActive (true);
-
-		StartButton.transform.position = StartButtonInitPos;
-		SoundButton.transform.position = SoundButtonInitPos;
-		ShareButton.transform.position = ShareButtonInitPos;
-		LineShadow.transform.position = LineShadowInitPos;
-		CurrentScore.transform.position = CurrentScoreInitPos;
-		HighestScore.transform.position = HighestScoreInitPos;
-
-		StartButton.GetComponent<Image>().color = new Color (1, 1, 1, 1);
-		SoundButton.GetComponent<Image>().color = new Color (1, 1, 1, 1);
-		ShareButton.GetComponent<Image>().color = new Color (1, 1, 1, 1);
-		StartBackground.GetComponent<Image>().color = new Color (1, 1, 1, 1);
-		LineShadow.GetComponent<Image>().color = new Color (1, 1, 1, 1);
-		CurrentScore.transform.Translate (0, Time.deltaTime * transitionSpeed, 1);
-		HighestScore.transform.Translate (0, Time.deltaTime * transitionSpeed, 1);
-
-		PauseButton.GetComponent<Image>().color = new Color (1, 1, 1, 0);
-		ScoreText.GetComponent<Text>().color = new Color (1, 1, 1, 0);
+//		//RestartCount++;
+//		GameOverTransitionFlag = true;
+//		myGameManager.DisplayScore ();
+//		PreviousScreen = "GameOver";
 	}
 
 	void Start(){
-		StartButtonInitPos = StartButton.transform.position;
-		SoundButtonInitPos = SoundButton.transform.position;
-		ShareButtonInitPos = ShareButton.transform.position;
-		LineShadowInitPos = LineShadow.transform.position;
-		CurrentScoreInitPos = ShareButton.transform.position;
-		HighestScoreInitPos = LineShadow.transform.position;
 
-		PauseButton.GetComponent<Image>().color = new Color (1f, 1f, 1f, 1 - alphaLevel);
-		ScoreText.GetComponent<Text>().color = new Color (1f, 1f, 1f, 1 - alphaLevel);
+		myGameManager = FindObjectOfType<GameManager>();
+		StartScreenButtonsInitPos = StartScreenButtons.transform.position;
+		QuitScreenInitPos = QuitScreen.transform.position;
+		//StartBackgroundAlpha = StartBackground.GetComponent<Image>().color.a;
+
+		CurrentScore.SetActive (false);
+		HighestScore.SetActive (false);
+		Title.SetActive (true);
+
+		PauseButton.GetComponent<Image>().color = new Color (1, 1, 1, 0);
+		ScoreText.GetComponent<Text>().color = new Color (1, 1, 1, 0);
+
+		PreviousScreen = "Start";
+		firstHomeScreenTransition = true;
 	}
 
 	void Update(){
-		if (StartScreenTransition){
-			StartButton.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
-			SoundButton.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
-			ShareButton.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
-			LineShadow.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
 
-			CurrentScore.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
-			HighestScore.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			if (GameManager.IsBallFalling ()) {
+				//fnPauseGameButton ();
+			} else {
+				if (!QuitScreen.activeSelf) {
+					print ("quit screen transition");
+					quitScreenTransition = true;
+				} else {
+					print ("Exit game");
+					Application.Quit ();
+				}
+			}
+		}
 
-			if (alphaLevel > 0.0f)
-				alphaLevel -= Time.deltaTime * 2.5f;
+		if (firstHomeScreenTransition) {
+			ScreenTransition ("EnableFirstHomeScreen");
+		}
 
-			StartButton.GetComponent<Image>().color = new Color (1f, 1f, 1f, alphaLevel);
-			SoundButton.GetComponent<Image>().color = new Color (1f, 1f, 1f, alphaLevel);
-			ShareButton.GetComponent<Image>().color = new Color (1f, 1f, 1f, alphaLevel);
-			StartBackground.GetComponent<Image>().color = new Color (1f, 1f, 1f, alphaLevel);
-			LineShadow.GetComponent<Image>().color = new Color (1f, 1f, 1f, alphaLevel);
+		if (quitScreenTransition) {
+			ScreenTransition ("DisableHomeScreen");
+			ScreenTransition ("EnableQuitScreen");
+		}
+//
+//		if (StartScreenTransitionFlag){
+//			StartScreenTransition ();
+//		}
+//
+//		if (GameOverTransitionFlag) {
+//			ResetScreenTransition ();
+//		}
+//
+//
+//		if (PauseTransitionFlag) {
+//			ResetScreenTransition ();
+//		}
+//
 
-			CurrentScore.GetComponent<Text>().color = new Color (1f, 1f, 1f, alphaLevel);
-			HighestScore.GetComponent<Text>().color = new Color (1f, 1f, 1f, alphaLevel);
+//
+//		if (ResetQuitGameTransitionFlag) {
+//			ResetQuitScreenTransition ();
+//		}
 
-			PauseButton.GetComponent<Image>().color = new Color (1f, 1f, 1f, 1 - alphaLevel);
-			ScoreText.GetComponent<Text>().color = new Color (1f, 1f, 1f, 1 - alphaLevel);
 
-			screen = Camera.main.WorldToViewportPoint (StartButton.transform.position);
-			if(screen.y > 0.75f){
-				StartButton.SetActive(false);
-				SoundButton.SetActive(false);
-				ShareButton.SetActive(false);
-				StartBackground.SetActive (false);
-				LineShadow.SetActive (false);
+	}
+
+	void ScreenTransition(string TransitionType){
+
+		if (TransitionType == "EnableFirstHomeScreen") {
+			if (firstFrameHomeScreenTransition) {
+				StartScreenButtons.SetActive (true);
 				CurrentScore.SetActive (false);
 				HighestScore.SetActive (false);
-
-				StartScreenTransition = false;
-
-				StartGame ();
+				StartScreenButtons.transform.position = new Vector3 (StartScreenButtonsInitPos.x, EndOfScreen, StartScreenButtonsInitPos.z);
+				foreach (Image myImage in StartScreenButtons.GetComponentsInChildren<Image>()) {
+					myImage.color = new Color (1f, 1f, 1f, 0);
+				}
+				foreach (Text myText in StartScreenButtons.GetComponentsInChildren<Text>()) {
+					myText.color = new Color (1f, 1f, 1f, 0);
+				}
+				firstFrameHomeScreenTransition = false;
 			}
 
+			StartScreenButtons.transform.Translate (0, Time.deltaTime * StartTransitionSpeed, 0);
+			if (alphaLevel <= 1)
+				alphaLevel += Time.deltaTime * 1f;
 
+			foreach (Image myImage in StartScreenButtons.GetComponentsInChildren<Image>()) {
+				myImage.color = new Color (1f, 1f, 1f, alphaLevel);
+			}
+			foreach (Text myText in StartScreenButtons.GetComponentsInChildren<Text>()) {
+				myText.color = new Color (1f, 1f, 1f, alphaLevel);
+			}
+
+			if (StartScreenButtons.transform.position.y >= StartScreenButtonsInitPos.y) {
+				foreach (Image myImage in StartScreenButtons.GetComponentsInChildren<Image>()) {
+					myImage.color = new Color (1f, 1f, 1f, 1f);
+				}
+				foreach (Text myText in StartScreenButtons.GetComponentsInChildren<Text>()) {
+					myText.color = new Color (1f, 1f, 1f, 1f);
+				}
+
+				StartScreenButtons.transform.position = StartScreenButtonsInitPos;
+
+				if (firstHomeScreenTransition)
+					firstHomeScreenTransition = false;
+
+				firstFrameHomeScreenTransition = true;
+
+			}
+		} else if (TransitionType == "EnableQuitScreen") {
+			if (firstFrameQuitScreenTransition) {
+				QuitScreen.SetActive (true);
+				QuitScreen.transform.position = new Vector3 (QuitScreenInitPos.x, EndOfScreen, QuitScreenInitPos.z);
+				foreach (Text myText in QuitScreen.GetComponentsInChildren<Text>()) {
+					myText.color = new Color (1f, 1f, 1f, 0);
+				}
+				firstFrameQuitScreenTransition = false;
+			}
+
+			QuitScreen.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
+
+			if (quitAlphaLevel <= 1) {
+				quitAlphaLevel += Time.deltaTime * 1f;
+			}
+			foreach (Text myText in QuitScreen.GetComponentsInChildren<Text>()) {
+				myText.color = new Color (1f, 1f, 1f, quitAlphaLevel);
+			}
+
+			if (QuitScreen.transform.position.y >= QuitScreenInitPos.y) {
+				foreach (Text myText in QuitScreen.GetComponentsInChildren<Text>()) {
+					myText.color = new Color (1f, 1f, 1f, 1f);
+				}
+				QuitScreen.transform.position = QuitScreenInitPos;
+
+				if (quitScreenTransition)
+					quitScreenTransition = false;
+
+				firstFrameQuitScreenTransition = true;
+			}
 		}
 
-		if (GameOverTransition) {
-			ResetStartScreenButtons ();
-			GameOverTransition = false;
+		else if (TransitionType == "DisableHomeScreen") {
+			
+			StartScreenButtons.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
+			if (alphaLevel >= 0)
+				alphaLevel -= Time.deltaTime * 5f;
+
+			foreach (Image myImage in StartScreenButtons.GetComponentsInChildren<Image>()) {
+				myImage.color = new Color (1f, 1f, 1f, alphaLevel);
+			}
+			foreach (Text myText in StartScreenButtons.GetComponentsInChildren<Text>()) {
+				myText.color = new Color (1f, 1f, 1f, alphaLevel);
+			}
+
+			screen = Camera.main.WorldToViewportPoint (StartScreenButtons.transform.position);
+			if(screen.y > 0.75f){
+	
+				StartScreenButtons.SetActive (false);
+	
+				PauseButton.GetComponent<Image>().color = new Color (1, 1, 1, 1);
+				ScoreText.GetComponent<Text>().color = new Color (1, 1, 1, 1);
+	
+//				StartScreenTransitionFlag = false;
+//				startScreenTransitionCompleted = true;
+			}
 		}
 	}
+
+	void StartScreenTransition(){
+
+//		StartScreenButtons.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
+//
+//		if (alphaLevel >= 0)
+//			alphaLevel -= Time.deltaTime * 5f;
+//
+//		foreach (Image myImage in StartScreenButtons.GetComponentsInChildren<Image>()) {
+//			myImage.color = new Color (1f, 1f, 1f, alphaLevel);
+//		}
+//		foreach (Text myText in StartScreenButtons.GetComponentsInChildren<Text>()) {
+//			myText.color = new Color (1f, 1f, 1f, alphaLevel);
+//		}
+//		//StartBackground.GetComponent<Image>().color = new Color (1, 1, 1, alphaLevel);
+//
+//		PauseButton.GetComponent<Image>().color = new Color (1, 1, 1, 1 - alphaLevel);
+//		ScoreText.GetComponent<Text>().color = new Color (1, 1, 1, 1 - alphaLevel);
+//
+//		screen = Camera.main.WorldToViewportPoint (StartScreenButtons.transform.position);
+//		if(screen.y > 0.75f){
+//
+//			StartScreenButtons.SetActive (false);
+//			//StartBackground.SetActive (false);
+//
+//			if (!isFirstStart) {
+//				Title.SetActive (false);
+//			} else {
+//				CurrentScore.SetActive (false);
+//				HighestScore.SetActive (false);
+//			}
+//
+//			PauseButton.GetComponent<Image>().color = new Color (1, 1, 1, 1);
+//			ScoreText.GetComponent<Text>().color = new Color (1, 1, 1, 1);
+//
+//			StartScreenTransitionFlag = false;
+//			startScreenTransitionCompleted = true;
+//		}
+	}
+		
+
+//	void ResetScreenTransition (){
+//
+//		if (resetFirstFrameFlag) {
+//
+//			StartScreenButtons.SetActive (true);
+//			//StartBackground.SetActive (true);
+//
+//			if (isFirstStart) {
+//				Title.SetActive (true);
+//				CurrentScore.SetActive (false);
+//				HighestScore.SetActive (false);
+//			} else {
+//				Title.SetActive (false);
+//				CurrentScore.SetActive (true);
+//				HighestScore.SetActive (true);
+//			}
+//
+//			StartScreenButtons.transform.position = new Vector3 (StartScreenButtonsInitPos.x, EndOfScreen, StartScreenButtonsInitPos.z);
+//			resetFirstFrameFlag = false;
+//		}
+//
+//		if (isFirstStart) {
+//			StartScreenButtons.transform.Translate (0, Time.deltaTime * StartTransitionSpeed, 0);
+//		} else {
+//			StartScreenButtons.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
+//		}
+//
+//		if (alphaLevel <= 1) {
+//
+//			//if(isFirstStart)
+//				alphaLevel += Time.deltaTime * 1f;
+//			//else
+//			//	alphaLevel += Time.deltaTime * 5f;
+//		}
+//		foreach (Image myImage in StartScreenButtons.GetComponentsInChildren<Image>()) {
+//			myImage.color = new Color (1f, 1f, 1f, alphaLevel);
+//		}
+//		foreach (Text myText in StartScreenButtons.GetComponentsInChildren<Text>()) {
+//			myText.color = new Color (1f, 1f, 1f, alphaLevel);
+//		}
+//
+//		//StartBackground.GetComponent<Image>().color = new Color (1, 1, 1, StartBackgroundAlpha);
+//
+//		PauseButton.GetComponent<Image>().color = new Color (1, 1, 1, 0);
+//		ScoreText.GetComponent<Text>().color = new Color (1, 1, 1, 0);
+//
+//		if (StartScreenButtons.transform.position.y >= StartScreenButtonsInitPos.y) {
+//			foreach (Image myImage in StartScreenButtons.GetComponentsInChildren<Image>()) {
+//				myImage.color = new Color (1f, 1f, 1f, 1f);
+//			}
+//			foreach (Text myText in StartScreenButtons.GetComponentsInChildren<Text>()) {
+//				myText.color = new Color (1f, 1f, 1f, 1f);
+//			}
+//
+//			StartScreenButtons.transform.position = StartScreenButtonsInitPos;
+//
+//			if (PauseTransitionFlag)
+//				PauseTransitionFlag = false;
+//
+//			if (GameOverTransitionFlag) {
+//				GameOverTransitionFlag = false;
+//			}
+//
+//			if (isFirstStart)
+//				isFirstStart = false;
+//
+//			if (initStartScreenflag)
+//				initStartScreenflag = false;
+//			resetFirstFrameFlag = true;
+//
+//		}
+//	}
+
+//	void QuitScreenTransition(){
+//		if (quitScreenFirstFrameFlag) {
+//
+//			QuitScreen.SetActive (true);
+//			//StartBackground.SetActive (true);
+//
+//			QuitScreen.transform.position = new Vector3 (QuitScreenInitPos.x, EndOfScreen, QuitScreenInitPos.z);
+//			quitScreenFirstFrameFlag = false;
+//		}
+//			
+//		QuitScreen.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
+//
+//		if (quitAlphaLevel <= 1) {
+//			quitAlphaLevel += Time.deltaTime * 1f;
+//		}
+//		foreach (Text myText in QuitScreen.GetComponentsInChildren<Text>()) {
+//			myText.color = new Color (1f, 1f, 1f, quitAlphaLevel);
+//		}
+//
+//		if (QuitScreen.transform.position.y >= QuitScreenInitPos.y) {
+//			foreach (Text myText in QuitScreen.GetComponentsInChildren<Text>()) {
+//				myText.color = new Color (1f, 1f, 1f, 1f);
+//			}
+//			QuitScreen.transform.position = QuitScreenInitPos;
+//
+//			if (QuitGameTransitionFlag)
+//				QuitGameTransitionFlag = false;
+//			
+//			quitScreenFirstFrameFlag = true;
+//		}
+//	}
+//
+//	void ResetQuitScreenTransition(){
+//		QuitScreen.transform.Translate (0, Time.deltaTime * transitionSpeed, 0);
+//
+//		if (quitAlphaLevel >= 0)
+//			quitAlphaLevel -= Time.deltaTime * 5f;
+//
+//		foreach (Text myText in QuitScreen.GetComponentsInChildren<Text>()) {
+//			myText.color = new Color (1f, 1f, 1f, quitAlphaLevel);
+//		}
+//
+//		screen = Camera.main.WorldToViewportPoint (QuitScreen.transform.position);
+//		if(screen.y > 0.75f){
+//
+//			QuitScreen.SetActive (false);
+//
+//			ResetQuitGameTransitionFlag = false;
+//		}
+//	}
 }

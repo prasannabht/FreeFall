@@ -6,10 +6,11 @@ public class BallThrowerRotaterBehaviour : MonoBehaviour {
 
 	Vector3 pos;
 	float ang;
+	float angDiff;
 	float initX;
-	BallBehaviour ballScript;
+	//BallBehaviour ballScript;
 	bool autoMove = false;
-	bool isMoving = true;
+	//bool isMoving = true;
 	//bool isClicked = false;
 	bool fadeAwayInstruction = false;
 	float alphaLevel = 1f;
@@ -22,19 +23,19 @@ public class BallThrowerRotaterBehaviour : MonoBehaviour {
 
 
 	void Start () {
-		ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
+		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
 		//audioSource.clip = rotaterSound;
 		initX = this.transform.position.x;
 		initAngle = transform.rotation.eulerAngles.z;
 		initAngle1 = transform.rotation.eulerAngles.z;
-		print ("Init: " + initAngle);
+		//print ("Init: " + initAngle);
 	}
 
 	void Update () {
 		//determine if game is stopped or paused
-		isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
+		//isMoving = !ballScript.getStopMovementFlag () && !ballScript.getGamePausedFlag ();
 
-		if (autoMove && isMoving) {
+		if (autoMove && GameManager.IsBallFalling()) {
 			if (!isNextStopDefined) {
 				//print ("currAng: " + ang);
 				nextStop = CommonFunctions.FindNextStop (initAngle, ang);
@@ -85,15 +86,6 @@ public class BallThrowerRotaterBehaviour : MonoBehaviour {
 			}
 
 			transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
-//
-//
-//			if (isMoving) {
-//				//transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
-//				if(initX < 0f)
-//					transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
-//				else
-//					transform.rotation = Quaternion.AngleAxis (180f - ang, Vector3.back);
-//			}
 
 			if (fadeAwayInstruction) {
 				if (alphaLevel > 0.0f) {
@@ -106,12 +98,13 @@ public class BallThrowerRotaterBehaviour : MonoBehaviour {
 					fadeAwayInstruction = false;
 				}
 			}
+
 		}
 	}
 
 	void OnMouseDrag () {
 
-		if (isMoving) {
+		if (GameManager.IsBallFalling()) {
 
 			//play sound
 			if (!soundPlayed) {
@@ -125,46 +118,21 @@ public class BallThrowerRotaterBehaviour : MonoBehaviour {
 
 			//ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg;
 			ang = CommonFunctions.GetAngle (pos);
-			if ( Mathf.Abs(ang) > Mathf.Abs(initAngle) + 5f || Mathf.Abs(ang) < Mathf.Abs(initAngle) - 5f) {
-				autoMove = true;
-				isNextStopDefined = false;
-			}
-//			if (initX < 0f) {
-//				if (ang < -90f)
-//					ang = -90f;
-//				if (ang > 90f)
-//					ang = 90f;
-//
-//				if (ang > 10f || ang < -10f) {
-//					autoMove = true;
-//					isNextStopDefined = false;
-//				}
-//
-//			} else {
-//
-//				if (ang < 90f && ang > 0f)
-//					ang = 90f;
-//				if (ang > -90f && ang < 0f)
-//					ang = -90f;
-//
-//				if (ang > -170f && ang < -90f) {
-//					autoMove = true;
-//					isNextStopDefined = false;
-//				}
-//				if (ang < 170f && ang > 90f) {
-//					autoMove = true;
-//					isNextStopDefined = false;
-//				}
-//				
-//				
-//			}
-
-//			if(initX < 0f)
-//				transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
+//			if (ang < 0)
+//				ang1 = ang + 360;
 //			else
-//				transform.rotation = Quaternion.AngleAxis (180f - ang, Vector3.back);
+//				ang1 = ang;
+			
+			angDiff = Mathf.Abs(Mathf.Abs (initAngle1) - Mathf.Abs (ang));
 
-			transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
+			if (angDiff <= 90) {
+				if (Mathf.Abs (ang) > Mathf.Abs (initAngle) + 5f || Mathf.Abs (ang) < Mathf.Abs (initAngle) - 5f) {
+					autoMove = true;
+					isNextStopDefined = false;
+				}
+
+				transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
+			}
 		}
 
 		if (!transform.root.gameObject.name.Contains ("Fake")) {
