@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour {
 
 	[HideInInspector]
 	public bool collisionFlag = false;
-	float score;
+	public float score;
 	float highestScore;
 	public static float highScore;
 	//static float obstacleCount=0;
@@ -29,23 +29,22 @@ public class GameManager : MonoBehaviour {
 	public static float topY;
 	public static float bottomY;
 
+	public static float checkpointInitScore = 40;
+	public static float checkpointRepeat = 20;
+	public static float nextCheckpoint;
+
 
 	void Awake (){
-	//	DontDestroyOnLoad (this);
-	//	scoreTextTemp = scoreText;
-
-	//	DisplayScore ();
-	}
-
-	void Start () {
-
 		leftX = Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width * 0, 0, 0)).x;
 		rightX = Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width * 1, 0, 0)).x;
 		topY = Camera.main.ScreenToWorldPoint (new Vector3 (0, Screen.height * 1, 0)).y;
 		bottomY = Camera.main.ScreenToWorldPoint (new Vector3 (0, Screen.height * 0, 0)).y;
+	}
 
+	void Start () {
 		score = 0;
 		tempVar = dontMove;
+		nextCheckpoint = checkpointInitScore;
 
 		if(PlayerPrefs.GetFloat ("highscore") > 20)
 			initialSpeed = 4f;
@@ -64,7 +63,12 @@ public class GameManager : MonoBehaviour {
 
 		if (collisionFlag) {
 			DisplayScore ();
-			score = 0;
+
+			if (UIManager.checkpoint) {
+				score = UIManager.currentCheckpointScore;
+			} else {
+				score = 0;
+			}
 			scoreText.text = "" + score;
 			SetBallFallingFlag (false);
 			//FindObjectOfType<ButtonBehaviour>().GameOverScreen();
@@ -81,17 +85,24 @@ public class GameManager : MonoBehaviour {
 	public void UpdateScore(float Increment){
 		score += Increment;
 		scoreText.text = "" + score;
+		if (score == nextCheckpoint) {
+			UIManager.enableCheckpoint = true;
+		}
+		if (score > PlayerPrefs.GetFloat ("highscore")) {
+			UIManager.celebrateHighScore = true;
+			PlayerPrefs.SetFloat ("highscore", score);
+		}
 	}
 
 	public void DisplayScore(){
-		if (score > PlayerPrefs.GetFloat ("highscore")) {
-			PlayerPrefs.SetFloat ("highscore", score);
-		}
+
 
 		highestScore = PlayerPrefs.GetFloat ("highscore", highScore);
 
-		currentScoreText.text = score.ToString() + "\nSCORE";
-		highestScoreText.text = highestScore.ToString() + "\nHIGHEST";
+//		currentScoreText.text = score.ToString() + "\nSCORE";
+//		highestScoreText.text = highestScore.ToString() + "\nHIGHEST";
+		currentScoreText.text = score.ToString();
+		highestScoreText.text = highestScore.ToString();
 	}
 
 	public static void SetBallFallingFlag(bool flag){
@@ -127,5 +138,6 @@ public class GameManager : MonoBehaviour {
 
 		return currSpeed;
 	}
+
 		
 }

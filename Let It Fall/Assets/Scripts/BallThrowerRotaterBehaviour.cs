@@ -42,28 +42,6 @@ public class BallThrowerRotaterBehaviour : MonoBehaviour {
 				isNextStopDefined = true;
 				//print ("Go To: " + nextStop);
 			}
-//			if (ang > 0f ) {
-//				if (ang > 85f && ang < 95f) {
-//					ang = 90f;
-//					autoMove = false;
-//				} else {
-//					if (ang < 90f)
-//						ang += Time.deltaTime * 300f;
-//					else
-//						ang -= Time.deltaTime * 300f;
-//				}
-//			} else {
-//				if (ang < -85f && ang > -95f) {
-//					ang = -90f;
-//					autoMove = false;
-//				} else {
-//					if (ang < -90f) {
-//						ang += Time.deltaTime * 300f;
-//					} else {
-//						ang -= Time.deltaTime * 300f;
-//					}
-//				}
-//			}
 
 			if (ang < nextStop) {
 				if (ang > nextStop - 5f) {
@@ -87,18 +65,18 @@ public class BallThrowerRotaterBehaviour : MonoBehaviour {
 
 			transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
 
-			if (fadeAwayInstruction) {
-				if (alphaLevel > 0.0f) {
-					alphaLevel -= Time.deltaTime * 10f;
-					transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
-				}
+		}
 
-				if (alphaLevel <= 0f) {
-					transform.root.FindChild ("Instruction").gameObject.SetActive(false);
-					fadeAwayInstruction = false;
-				}
+		if (fadeAwayInstruction && GameManager.IsBallFalling()) {
+			if (alphaLevel > 0.0f) {
+				alphaLevel -= Time.deltaTime * 10f;
+				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 			}
 
+			if (alphaLevel <= 0f) {
+				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+				fadeAwayInstruction = false;
+			}
 		}
 	}
 

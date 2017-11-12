@@ -60,17 +60,17 @@ public class PullyBehaviour : MonoBehaviour {
 
 
 			Slider.localPosition = (posSlider);
+		}
 
-			if (fadeAwayInstruction) {
-				if (alphaLevel > 0.0f) {
-					alphaLevel -= Time.deltaTime * 5;
-					transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
-				}
+		if (fadeAwayInstruction && GameManager.IsBallFalling()) {
+			if (alphaLevel > 0.0f) {
+				alphaLevel -= Time.deltaTime * 5;
+				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+			}
 
-				if (alphaLevel <= 0f) {
-					transform.root.FindChild ("Instruction").gameObject.SetActive(false);
-					fadeAwayInstruction = false;
-				}
+			if (alphaLevel <= 0f) {
+				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+				fadeAwayInstruction = false;
 			}
 		}
 	}

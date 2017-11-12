@@ -29,6 +29,32 @@ public class ObstacleManager : MonoBehaviour {
 	float alphaLevel = 1;
 	int randomNum;
 
+	float checkpointDistance, checkpointObstacleCount;
+
+	public void SaveCheckpointDetails(){
+		print ("Saving checkpoint details");
+		checkpointDistance = currentDistance;
+		checkpointObstacleCount = obstacleCount;
+	}
+
+	public void ResetToCheckpoint(){
+		print ("Distance: " + checkpointDistance);
+		print ("Count: " + checkpointObstacleCount);
+		currentDistance = checkpointDistance;
+		obstacleCount = checkpointObstacleCount;
+		firstObstacle = true;
+		alphaLevel = 1;
+
+		fadeOutAndDestroyObstacles = true;
+		obstaclesToDestroy = GameObject.FindGameObjectsWithTag ("obstacle");
+		foreach (GameObject obst in obstaclesToDestroy) {
+			foreach (PolygonCollider2D col in obst.GetComponentsInChildren<PolygonCollider2D>()) {
+				col.enabled = false;
+			}
+		}
+
+	}
+
 	public void ResetObstacles(){
 		currentDistance = level1Distance;
 		firstObstacle = true;
@@ -96,8 +122,12 @@ public class ObstacleManager : MonoBehaviour {
 				randomNum = Random.Range (0, 21);
 			else if (obstacleCount < 70)
 				randomNum = Random.Range (0, 23);
-			else
+			else if (obstacleCount < 80)
 				randomNum = Random.Range (0, 25);
+			else if (obstacleCount < 90)
+				randomNum = Random.Range (0, 27);
+			else
+				randomNum = Random.Range (0, 29);
 
 			//randomNum = Random.Range(0,obstacles.Length);
 			obstacle = sortedObstacles [randomNum];

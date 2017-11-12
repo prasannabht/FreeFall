@@ -14,6 +14,7 @@ public class MovementBehaviour : MonoBehaviour {
 	
 
 	void Update () {
+	//void FixedUpdate () {
 
 		currSpeed = GameManager.GetSpeed();
 		if (GameManager.StopMovement()) {

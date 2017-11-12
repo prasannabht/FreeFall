@@ -46,7 +46,7 @@ public class FallingBallsBehaviour : MonoBehaviour {
 	void SpawnObject(){
 		time = 0;
 		spawnDuration = 0;
-		currFallingBall = Instantiate (FallingBall, new Vector3(Random.Range(GameManager.leftX, GameManager.rightX), GameManager.topY, 0), Quaternion.identity);
+		currFallingBall = Instantiate (FallingBall, new Vector3(Random.Range(GameManager.leftX, GameManager.rightX), GameManager.topY, 0.1f), Quaternion.identity);
 		currFallingBall.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, Random.Range(minAlpha, maxAlpha));
 	}
 }

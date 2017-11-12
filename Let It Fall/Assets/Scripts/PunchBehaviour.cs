@@ -75,20 +75,20 @@ public class PunchBehaviour : MonoBehaviour {
 				
 			transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
 
-			if (fadeAwayInstruction) {
-				if (alphaLevel > 0.0f) {
-					alphaLevel -= Time.deltaTime * 5;
-					transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
-				}
-
-				if (alphaLevel <= 0f) {
-					transform.root.FindChild ("Instruction").gameObject.SetActive(false);
-					fadeAwayInstruction = false;
-				}
-			}
 		}
 
 
+		if (fadeAwayInstruction && GameManager.IsBallFalling()) {
+			if (alphaLevel > 0.0f) {
+				alphaLevel -= Time.deltaTime * 5;
+				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+			}
+
+			if (alphaLevel <= 0f) {
+				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+				fadeAwayInstruction = false;
+			}
+		}
 	}
 
 	void OnMouseDrag () {
