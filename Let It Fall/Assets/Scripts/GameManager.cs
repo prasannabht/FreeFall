@@ -5,14 +5,21 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
+	UIManager UIManagerScript;
+	AudioManager AudioManagerScript;
+	ObstacleManager ObstacleManagerScript;
+
 	//public float speed = 3f;
-	float initialSpeed = 3f;
+	float initialSpeed = 3.5f;
 	float finalSpeed = 6f;
+	float superSpeed = 10f;
+	float slowdownSpeed = 2f;
 
 	public bool dontMove = false;
 	public Text scoreText;
 	public Text currentScoreText;
 	public Text highestScoreText;
+	public Text lifeCoinsText;
 
 	[HideInInspector]
 	public bool collisionFlag = false;
@@ -29,9 +36,22 @@ public class GameManager : MonoBehaviour {
 	public static float topY;
 	public static float bottomY;
 
-	public static float checkpointInitScore = 40;
-	public static float checkpointRepeat = 20;
+	public static float checkpointInitScore = 50;
+	public static float checkpointRepeat = 30;
 	public static float nextCheckpoint;
+
+	public static float superspeedInitScore = 70;
+	public static float superspeedRepeat = 30;
+	public static float nextSuperspeed;
+
+	public static float slowdownInitScore = 90;
+	public static float slowdownRepeat = 30;
+	public static float nextSlowdown;
+
+	public static float lifecoinInitScore = 30;
+	public static float lifecoinRepeat = 10;
+	public static float lifecoinRedeem = 20;
+	public static float lifecoinCollected = 0;
 
 
 	void Awake (){
@@ -39,54 +59,86 @@ public class GameManager : MonoBehaviour {
 		rightX = Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width * 1, 0, 0)).x;
 		topY = Camera.main.ScreenToWorldPoint (new Vector3 (0, Screen.height * 1, 0)).y;
 		bottomY = Camera.main.ScreenToWorldPoint (new Vector3 (0, Screen.height * 0, 0)).y;
+
+		UIManagerScript = FindObjectOfType<UIManager>();
+		AudioManagerScript = FindObjectOfType<AudioManager>();
+		ObstacleManagerScript = FindObjectOfType<ObstacleManager>();
 	}
 
 	void Start () {
 		score = 0;
 		tempVar = dontMove;
 		nextCheckpoint = checkpointInitScore;
+		nextSuperspeed = superspeedInitScore;
+		nextSlowdown = slowdownInitScore;
 
 		if(PlayerPrefs.GetFloat ("highscore") > 20)
 			initialSpeed = 4f;
 
 		speed = initialSpeed;
 
+		lifecoinCollected = PlayerPrefs.GetFloat ("lifeCoins");
 		//Play theme music
-		FindObjectOfType<AudioManager>().Play("Theme");
+		AudioManagerScript.Play("Theme");
 	}
 	
 
 	void Update () {
 		//update speed
-		if (speed < finalSpeed)
-			speed = IncreaseSpeed(FindObjectOfType<ObstacleManager> ().obstacleCount);
+		//if (speed < finalSpeed)
+		speed = IncreaseSpeed(ObstacleManagerScript.obstacleCount);
+		if (lifecoinCollected == lifecoinRedeem) {
+			PlayerPrefs.SetFloat ("lifeAvailable", PlayerPrefs.GetFloat ("lifeAvailable") + 1);
+			PlayerPrefs.SetFloat ("lifeCoins", 0);
+			lifecoinCollected = 0;
+			print ("Time to redeem lifecoins");
+		}
 
+		if (UIManagerScript.IsSuperSpeed)
+			speed = superSpeed;
+
+		if (UIManagerScript.IsSlowDown)
+			speed = slowdownSpeed;
+
+		//print ("Speed: " + speed + ": flag: " + FindObjectOfType<UIManager>().IsSuperSpeed);
 		if (collisionFlag) {
-			DisplayScore ();
 
-			if (UIManager.checkpoint) {
-				score = UIManager.currentCheckpointScore;
-			} else {
-				score = 0;
-			}
-			scoreText.text = "" + score;
-			SetBallFallingFlag (false);
-			//FindObjectOfType<ButtonBehaviour>().GameOverScreen();
-			FindObjectOfType<UIManager>().GameOver();
-			//Application.LoadLevel("Level 2");
-			//collisionFlag = false;
+			//if (!FindObjectOfType<UIManager> ().IsSuperSpeed) {
+
+				DisplayScore ();
+
+//				if (UIManager.checkpoint) {
+//					score = UIManager.currentCheckpointScore;
+//				} else {
+//					score = 0;
+//				}
+//				scoreText.text = "" + score;
+				SetBallFallingFlag (false);
+				//FindObjectOfType<ButtonBehaviour>().GameOverScreen();
+				UIManagerScript.GameOver ();
+				//Application.LoadLevel("Level 2");
+				//collisionFlag = false;
 //			FindObjectOfType<ObstacleManager> ().ResetObstacles();
 //			DisplayScore ();
 
-			collisionFlag = false;
+				collisionFlag = false;
+			//}
 		}
 	}
 
 	public void UpdateScore(float Increment){
 		score += Increment;
 		scoreText.text = "" + score;
+		//print ("Next superspeed: " + nextSuperspeed);  
 		if (score == nextCheckpoint) {
 			UIManager.enableCheckpoint = true;
+		}
+		if (score == nextSuperspeed) {
+			//print ("next superspeed ==");
+			UIManager.enableSuperSpeed = true;
+		}
+		if (score == nextSlowdown) {
+			UIManager.enableSlowDown = true;
 		}
 		if (score > PlayerPrefs.GetFloat ("highscore")) {
 			UIManager.celebrateHighScore = true;
@@ -96,13 +148,15 @@ public class GameManager : MonoBehaviour {
 
 	public void DisplayScore(){
 
-
+		print ("Score: " + score);
 		highestScore = PlayerPrefs.GetFloat ("highscore", highScore);
 
 //		currentScoreText.text = score.ToString() + "\nSCORE";
 //		highestScoreText.text = highestScore.ToString() + "\nHIGHEST";
+		scoreText.text = score.ToString();
 		currentScoreText.text = score.ToString();
 		highestScoreText.text = highestScore.ToString();
+		lifeCoinsText.text = PlayerPrefs.GetFloat ("lifeCoins").ToString ();
 	}
 
 	public static void SetBallFallingFlag(bool flag){
@@ -137,6 +191,7 @@ public class GameManager : MonoBehaviour {
 			currSpeed = finalSpeed;
 
 		return currSpeed;
+
 	}
 
 		

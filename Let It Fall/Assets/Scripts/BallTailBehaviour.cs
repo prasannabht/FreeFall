@@ -10,49 +10,44 @@ public class BallTailBehaviour : MonoBehaviour {
 	float alphaLevel;
 	float moveSpeed = 30f;
 	float rot = 4f;
+	Vector3 currScale;
 
 	void Start () {
-		//size = transform.localScale;
-		//initYSize = transform.localScale.y;
-
-		//size.y = 0.0f;
-		//transform.localScale = size;
 		alphaLevel = 0;
-		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
+		currScale = transform.localScale;
 	}
 	
 
 	void Update () {
 		if (GameManager.IsBallFalling() || !UIManager.GameStarted()) {
-//			if (transform.localScale.y < initYSize) {
-//				size.y += Time.deltaTime;
-//				transform.localScale = size;
-//			}
 
 			if (alphaLevel < 1) {
 				alphaLevel += Time.deltaTime * 5;
 				gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
-				print (gameObject.GetComponent<SpriteRenderer> ().color.a);
 			}
 
-
-			transform.localEulerAngles = new Vector3 (0, 0, Mathf.PingPong(Time.time*moveSpeed, rot) - rot/2);
-
+			if (FindObjectOfType<UIManager> ().IsSuperSpeed) {
+				if (transform.localScale.y < 1.3f) {
+					currScale.y += Time.deltaTime;
+					transform.localScale = currScale;
+				} 
+			} else {
+				if (transform.localScale.y > 1f) {
+					currScale.y -= Time.deltaTime;
+					transform.localScale = currScale;
+				}
+			}
 		}
 
 		if (!GameManager.IsBallFalling() && UIManager.GameStarted()) {
 			
-//			if (transform.localScale.y > 0.0f) {
-//				size.y -= Time.deltaTime * 4;
-//				transform.localScale = size;
-//			}
-//
 			if (alphaLevel > 0) {
 				alphaLevel -= Time.deltaTime * 5f;
 				gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 			}
 		} 
 
+		transform.localEulerAngles = new Vector3 (0, 0, Mathf.PingPong(Time.time*moveSpeed, rot) - rot/2);
 
 	}
 }

@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class ObstacleManager : MonoBehaviour {
 
+	public GameObject LifeCoin;
+
 	public Obstacle[] obstacles;
 	Obstacle[] sortedObstacles;
 	Obstacle obstacle;
@@ -28,6 +30,7 @@ public class ObstacleManager : MonoBehaviour {
 	GameObject[] obstaclesToDestroy;
 	float alphaLevel = 1;
 	int randomNum;
+	float nextLifeCoin;
 
 	float checkpointDistance, checkpointObstacleCount;
 
@@ -57,6 +60,7 @@ public class ObstacleManager : MonoBehaviour {
 
 	public void ResetObstacles(){
 		currentDistance = level1Distance;
+		nextLifeCoin = GameManager.lifecoinInitScore;
 		firstObstacle = true;
 		obstacleCount = 0;
 		alphaLevel = 1;
@@ -78,6 +82,7 @@ public class ObstacleManager : MonoBehaviour {
 
 	void Start () {
 		currentDistance = level1Distance;
+		nextLifeCoin = GameManager.lifecoinInitScore;
 	}
 	
 	void Update () {
@@ -134,17 +139,24 @@ public class ObstacleManager : MonoBehaviour {
 			currentObstacle = Instantiate (obstacle.obstacleObj, new Vector2 (obstacle.xPos, currentObstacle.transform.position.y - currentDistance), Quaternion.identity);
 			currentObstacle.tag = "obstacle";
 
-				if (obstacleList.Contains (currentObstacle.name) == false) {
-					obstacleList.Add (currentObstacle.name);
-					if (!currentObstacle.name.Contains ("Fake"))
-						displayInstructions (currentObstacle);
-				} else if (obstacleList.Contains (currentObstacle.name + "_1") == false) {
-					obstacleList.Add (currentObstacle.name + "_1");
-					if (!currentObstacle.name.Contains ("Fake"))
-						displayInstructions (currentObstacle);
-				}
+			if (obstacleList.Contains (currentObstacle.name) == false) {
+				obstacleList.Add (currentObstacle.name);
+				if (!currentObstacle.name.Contains ("Fake"))
+					displayInstructions (currentObstacle);
+			} else if (obstacleList.Contains (currentObstacle.name + "_1") == false) {
+				obstacleList.Add (currentObstacle.name + "_1");
+				if (!currentObstacle.name.Contains ("Fake"))
+					displayInstructions (currentObstacle);
+			}
 
-				++obstacleCount;
+			if (obstacleCount == nextLifeCoin) {
+				nextLifeCoin = nextLifeCoin + GameManager.lifecoinRepeat;
+
+				Instantiate (LifeCoin, new Vector3(Random.Range(GameManager.leftX, GameManager.rightX), currentObstacle.transform.position.y - 2, 0.1f), Quaternion.identity);
+
+			}
+
+			++obstacleCount;
 		}
 
 		if (fadeOutAndDestroyObstacles) {
@@ -165,11 +177,34 @@ public class ObstacleManager : MonoBehaviour {
 				}
 			}
 		}
+
+//		if (FindObjectOfType<UIManager> ().IsSuperSpeed) {
+//			DisableColliders ();
+//		}
 	}
 
 	void displayInstructions(GameObject myObstacle){
 		//print (myObstacle.name);
 		myObstacle.transform.root.FindChild ("Instruction").gameObject.SetActive (true);
+	}
+
+	public void DisableColliders(){
+		GameObject[] obstacles = GameObject.FindGameObjectsWithTag ("obstacle");
+		foreach (GameObject obst in obstacles) {
+			foreach (Collider2D col in obst.GetComponentsInChildren<Collider2D>()) {
+				col.enabled = false;
+				print ("Colliders disabled for: " + col.name);
+			}
+		}
+	}
+
+	void EnableColliders(){
+		GameObject[] obstacles = GameObject.FindGameObjectsWithTag ("obstacle");
+		foreach (GameObject obst in obstacles) {
+			foreach (Collider2D col in obst.GetComponentsInChildren<Collider2D>()) {
+				col.enabled = true;
+			}
+		}
 	}
 		
 }
