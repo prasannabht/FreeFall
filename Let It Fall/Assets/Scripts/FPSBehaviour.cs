@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class FPSBehaviour : MonoBehaviour {
 
 	public Text fpsText;
+	public Text loadTime;
 
 	private int FramesPerSec;
 	private float frequency = 1.0f;
@@ -13,6 +14,10 @@ public class FPSBehaviour : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		float endTime = System.DateTime.Now.Minute * 60 + System.DateTime.Now.Second;
+//		print ("Load started: " + PlayerPrefs.GetFloat ("starttime"));
+//		print ("Load ended: " + endTime);
+		loadTime.text = (endTime - PlayerPrefs.GetFloat ("starttime")).ToString () + " Sec";
 		StartCoroutine(FPS());
 	}
 

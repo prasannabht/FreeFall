@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour {
 	//public Animator StartScreenAnimator;
 	//public Animator QuitScreenAnimator;
 	public Animator BackgroundAnimator;
+	public GameObject StartScreenAnimator;
 	//public Animator CheckpointAnimator;
 	//public Animator SuperSpeedAnimator;
 	//public Animator SlowDownAnimator;
@@ -33,6 +34,8 @@ public class UIManager : MonoBehaviour {
 	public GameObject SuperSpeedButton;
 	public GameObject SlowDownButton;
 	public GameObject SuperSpeedTransparent;
+
+	public GameObject HintScreen;
 
 	public Sprite SoundOn;
 	public Sprite SoundOff;
@@ -74,6 +77,15 @@ public class UIManager : MonoBehaviour {
 	bool LifeTaken = false;
 	bool EnableStartButtonGlow = false;
 
+	bool IsHintActive = false;
+	int HintCheckpointShown = 0;
+	int HintSuperspeedShown = 0;
+	int HintSlowdownShown = 0;
+	int LifecoinShown = 0;
+
+	//string[] HintsAndAds = new string[] {"ads", "earncoins", "slowdown", "superspeed", "checkpoint", "lifecoin"};
+	int hintSize;
+
 	GameManager myGameManager;
 
 	void Awake(){
@@ -92,8 +104,14 @@ public class UIManager : MonoBehaviour {
 			PlayerPrefs.SetInt ("lifeAvailable", 0);
 		}
 
+		if (!PlayerPrefs.HasKey ("HintShown")) {
+			PlayerPrefs.SetInt ("HintShown", 0);
+		}
+
 		GameManagerScript = FindObjectOfType<GameManager>();
 		ObstacleManagerScript = FindObjectOfType<ObstacleManager>();
+
+		//hintSize = HintsAndAds.Length;
 	}
 
 	void Start(){
@@ -103,6 +121,7 @@ public class UIManager : MonoBehaviour {
 		DisableScoreLabels ();
 		DisableCelebrateHighScore ();
 		DisableHighScoreStar ();
+		EnableStartScreenAnimation ();
 		//MoveBallToMiddle ();
 
 		if (PlayerPrefs.GetInt("sound")==1) {
@@ -184,6 +203,10 @@ public class UIManager : MonoBehaviour {
 			EnableStartButtonGlow = false;
 		}
 
+		if (gameOverFlag) {
+			//show hint
+		}
+
 	}
 
 	public void StartGame(){
@@ -191,10 +214,12 @@ public class UIManager : MonoBehaviour {
 		celebrateHighScore = false;
 		StartScreenButtons.transform.FindChild ("StartButtonGlow").gameObject.SetActive (false);
 		SlideOutStartScreen ();
+		DisableStartScreenAnimation ();
 		//MoveBallToTop ();
 		GameManager.SetBallFallingFlag (true);
 		print ("Score: " + GameManagerScript.score);
-		if (gameOverFlag && !checkpoint) {
+		if (gameOverFlag) {
+		//if (gameOverFlag && !checkpoint) {
 			if (LifeTaken) {
 				print ("Life taken");
 				LifeTaken = false;
@@ -211,24 +236,19 @@ public class UIManager : MonoBehaviour {
 			}
 		}
 
-		if (gameOverFlag && checkpoint) {
-			ObstacleManagerScript.ResetToCheckpoint ();
-			gameOverFlag = false;
-			ResetCheckpointValues ();
-			GameManagerScript.score = UIManager.currentCheckpointScore;
-			print ("Updating score: " + GameManagerScript.score);
-			GameManagerScript.DisplayScore();
-			GameManager.nextSuperspeed = currentCheckpointScore + GameManager.superspeedRepeat;
-			//print ("next superspeed: " + GameManager.nextSuperspeed);
-
-			GameManager.nextSlowdown = currentCheckpointScore + GameManager.slowdownRepeat;
-			//print ("next slowdown: " + GameManager.nextSlowdown);
-
-		} else {
-			//GameManager.nextCheckpoint = GameManager.checkpointInitScore;
-		}
-
-		//GameManager.nextSuperspeed = GameManager.superspeedInitScore;
+//		if (gameOverFlag && checkpoint) {
+//			ObstacleManagerScript.ResetToCheckpoint ();
+//			gameOverFlag = false;
+//			ResetCheckpointValues ();
+//			GameManagerScript.score = UIManager.currentCheckpointScore;
+//			print ("Updating score: " + GameManagerScript.score);
+//			GameManagerScript.DisplayScore();
+//			GameManager.nextSuperspeed = currentCheckpointScore + GameManager.superspeedRepeat;
+//			GameManager.nextSlowdown = currentCheckpointScore + GameManager.slowdownRepeat;
+//
+//		} else {
+//			//GameManager.nextCheckpoint = GameManager.checkpointInitScore;
+//		}
 
 		EnablePauseAndScore ();
 		DisableHighScoreStar ();
@@ -238,7 +258,9 @@ public class UIManager : MonoBehaviour {
 		ShowCheckpointButton ();
 		ShowSuperSpeedButton ();
 		ShowSlowDownButton ();
-			
+
+		HideAllHints ();
+
 		//HideCheckpointButton ();
 		//MoveInBackgroundHills ();
 		//BackgroundDarkToLight ();
@@ -259,6 +281,7 @@ public class UIManager : MonoBehaviour {
 		DisableCheckpointButton ();
 		DisableSuperSpeedButton ();
 		DisableSlowDownButton ();
+		EnableHintScreen ();
 		if (celebrateHighScore) {
 			EnableCelebrateHighScore ();
 			celebrateHighScore = false;
@@ -269,6 +292,7 @@ public class UIManager : MonoBehaviour {
 			SuperSpeedTransparent.SetActive (false);
 		}
 		//MoveOutBackgroundHills ();
+
 	}
 
 	public void PauseGame(){
@@ -600,5 +624,79 @@ public class UIManager : MonoBehaviour {
 				LifeCoins.transform.FindChild ("LifeAvailable").GetComponent<Text> ().text = PlayerPrefs.GetFloat ("lifeAvailable").ToString ();
 			}
 		}
+	}
+
+	void EnableHintScreen(){
+		int currHintNum;
+		float currHighScore = PlayerPrefs.GetFloat ("highscore");
+		IsHintActive = true;
+		HintScreen.SetActive (true);
+		hintSize = 10;
+		if (currHighScore < 30) {
+			currHintNum = Random.Range (0, hintSize);
+		} else if (currHighScore < 50) {
+			currHintNum = Random.Range (0, hintSize - 1);
+		} else if (currHighScore < 70) {
+			currHintNum = Random.Range (0, hintSize - 2);
+		} else if (currHighScore < 90) {
+			currHintNum = Random.Range (0, hintSize - 3);
+		} else {
+			currHintNum = Random.Range (0, hintSize - 4);
+		}
+			
+		//string[] HintsAndAds = new string[] {"ads", "earncoins", "slowdown", "superspeed", "checkpoint", "lifecoin"};
+		switch (currHintNum) {
+		case 0:
+		case 1:
+		case 2:
+			HintScreen.transform.FindChild ("Ads").gameObject.SetActive (true);
+			HintScreen.GetComponent<Animator> ().Play ("SlideInAds", -1, 0);
+			break;
+		case 3:
+		case 4:
+		case 5:
+			HintScreen.transform.FindChild ("Earn Coins").gameObject.SetActive (true);
+			HintScreen.GetComponent<Animator> ().Play ("SlideInAds", -1, 0);
+			break;
+		case 6:
+			HintScreen.transform.FindChild ("Hint Slowdown").gameObject.SetActive (true);
+			HintScreen.GetComponent<Animator> ().Play ("SlideInHint", -1, 0);
+			break;
+		case 7:
+			HintScreen.transform.FindChild ("Hint Superspeed").gameObject.SetActive (true);
+			HintScreen.GetComponent<Animator> ().Play ("SlideInHint", -1, 0);
+			break;
+		case 8:
+			HintScreen.transform.FindChild ("Hint Checkpoint").gameObject.SetActive (true);
+			HintScreen.GetComponent<Animator> ().Play ("SlideInHint", -1, 0);
+			break;
+		case 9:
+			HintScreen.transform.FindChild ("Hint Lifecoins").gameObject.SetActive (true);
+			HintScreen.GetComponent<Animator> ().Play ("SlideInHint", -1, 0);
+			break;
+		}
+	}
+
+	void DisableHintScreen(){
+		IsHintActive = false;
+	}
+
+	void HideAllHints(){
+		HintScreen.transform.FindChild ("Hint Lifecoins").gameObject.SetActive (false);
+		HintScreen.transform.FindChild ("Hint Slowdown").gameObject.SetActive (false);
+		HintScreen.transform.FindChild ("Hint Superspeed").gameObject.SetActive (false);
+		HintScreen.transform.FindChild ("Hint Checkpoint").gameObject.SetActive (false);
+		HintScreen.transform.FindChild ("Ads").gameObject.SetActive (false);
+		HintScreen.transform.FindChild ("Earn Coins").gameObject.SetActive (false);
+
+		HintScreen.SetActive (false);
+	}
+
+	void EnableStartScreenAnimation(){
+		StartScreenAnimator.SetActive (true);
+	}
+
+	void DisableStartScreenAnimation(){
+		StartScreenAnimator.SetActive (false);
 	}
 }

@@ -15,7 +15,9 @@ public class LoadManager : MonoBehaviour {
 		Application.LoadLevel ("Loading Level");
 		yield return null;
 		print ("Loading");
+		float startTime = System.DateTime.Now.Minute * 60 + System.DateTime.Now.Second;
+		PlayerPrefs.SetFloat ("starttime", startTime);
 		Application.LoadLevel (name);
 		Destroy (this.gameObject);
 	}
-}
+} 

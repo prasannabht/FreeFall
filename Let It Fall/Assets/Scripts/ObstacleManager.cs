@@ -51,9 +51,10 @@ public class ObstacleManager : MonoBehaviour {
 		fadeOutAndDestroyObstacles = true;
 		obstaclesToDestroy = GameObject.FindGameObjectsWithTag ("obstacle");
 		foreach (GameObject obst in obstaclesToDestroy) {
-			foreach (PolygonCollider2D col in obst.GetComponentsInChildren<PolygonCollider2D>()) {
+			foreach (Collider2D col in obst.GetComponentsInChildren<Collider2D>()) {
 				col.enabled = false;
 			}
+			obst.tag = "destroyedObstacle";
 		}
 
 	}
@@ -67,9 +68,11 @@ public class ObstacleManager : MonoBehaviour {
 		fadeOutAndDestroyObstacles = true;
 		obstaclesToDestroy = GameObject.FindGameObjectsWithTag ("obstacle");
 		foreach (GameObject obst in obstaclesToDestroy) {
-			foreach (PolygonCollider2D col in obst.GetComponentsInChildren<PolygonCollider2D>()) {
+			//foreach (PolygonCollider2D col in obst.GetComponentsInChildren<PolygonCollider2D>()) {
+			foreach (Collider2D col in obst.GetComponentsInChildren<Collider2D>()) {
 				col.enabled = false;
 			}
+			obst.tag = "destroyedObstacle";
 		}
 //		foreach (GameObject obst in obstaclesToDestroy) {
 //			Destroy (obst);

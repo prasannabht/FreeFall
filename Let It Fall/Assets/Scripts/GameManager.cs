@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour {
 	float slowdownSpeed = 2f;
 
 	public bool dontMove = false;
+	//public bool IsTesting = false;
+
 	public Text scoreText;
 	public Text currentScoreText;
 	public Text highestScoreText;
@@ -53,6 +55,24 @@ public class GameManager : MonoBehaviour {
 	public static float lifecoinRedeem = 20;
 	public static float lifecoinCollected = 0;
 
+//	//For testing
+//	public static float checkpointInitScore = 10;
+//	public static float checkpointRepeat = 15;
+//	public static float nextCheckpoint;
+//
+//	public static float superspeedInitScore = 10;
+//	public static float superspeedRepeat = 15;
+//	public static float nextSuperspeed;
+//
+//	public static float slowdownInitScore = 10;
+//	public static float slowdownRepeat = 15;
+//	public static float nextSlowdown;
+//
+//	public static float lifecoinInitScore = 1;
+//	public static float lifecoinRepeat = 2;
+//	public static float lifecoinRedeem = 5;
+//	public static float lifecoinCollected = 0;
+
 
 	void Awake (){
 		leftX = Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width * 0, 0, 0)).x;
@@ -80,6 +100,22 @@ public class GameManager : MonoBehaviour {
 		lifecoinCollected = PlayerPrefs.GetFloat ("lifeCoins");
 		//Play theme music
 		AudioManagerScript.Play("Theme");
+
+//		//testing
+//		if (IsTesting) {
+//			checkpointInitScore = 10;
+//			checkpointRepeat = 15;
+//
+//			superspeedInitScore = 10;
+//			superspeedRepeat = 15;
+//
+//			slowdownInitScore = 10;
+//			slowdownRepeat = 15;
+//
+//			lifecoinInitScore = 1;
+//			lifecoinRepeat = 2;
+//			lifecoinRedeem = 5;
+//		}
 	}
 	
 
@@ -148,7 +184,6 @@ public class GameManager : MonoBehaviour {
 
 	public void DisplayScore(){
 
-		print ("Score: " + score);
 		highestScore = PlayerPrefs.GetFloat ("highscore", highScore);
 
 //		currentScoreText.text = score.ToString() + "\nSCORE";
