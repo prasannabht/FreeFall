@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour {
 	float slowdownSpeed = 2f;
 
 	public bool dontMove = false;
-	//public bool IsTesting = false;
+	public bool Testing = false;
 
 	public Text scoreText;
 	public Text currentScoreText;
@@ -38,40 +38,40 @@ public class GameManager : MonoBehaviour {
 	public static float topY;
 	public static float bottomY;
 
-	public static float checkpointInitScore = 50;
-	public static float checkpointRepeat = 30;
-	public static float nextCheckpoint;
-
-	public static float superspeedInitScore = 70;
-	public static float superspeedRepeat = 30;
-	public static float nextSuperspeed;
-
-	public static float slowdownInitScore = 90;
-	public static float slowdownRepeat = 30;
-	public static float nextSlowdown;
-
-	public static float lifecoinInitScore = 30;
-	public static float lifecoinRepeat = 10;
-	public static float lifecoinRedeem = 20;
-	public static float lifecoinCollected = 0;
-
-//	//For testing
-//	public static float checkpointInitScore = 10;
-//	public static float checkpointRepeat = 15;
+//	public static float checkpointInitScore = 50;
+//	public static float checkpointRepeat = 30;
 //	public static float nextCheckpoint;
 //
-//	public static float superspeedInitScore = 10;
-//	public static float superspeedRepeat = 15;
+//	public static float superspeedInitScore = 70;
+//	public static float superspeedRepeat = 30;
 //	public static float nextSuperspeed;
 //
-//	public static float slowdownInitScore = 10;
-//	public static float slowdownRepeat = 15;
+//	public static float slowdownInitScore = 90;
+//	public static float slowdownRepeat = 30;
 //	public static float nextSlowdown;
 //
-//	public static float lifecoinInitScore = 1;
-//	public static float lifecoinRepeat = 2;
-//	public static float lifecoinRedeem = 5;
+//	public static float lifecoinInitScore = 30;
+//	public static float lifecoinRepeat = 10;
+//	public static float lifecoinRedeem = 20;
 //	public static float lifecoinCollected = 0;
+
+	//For testing
+	public static float checkpointInitScore = 10;
+	public static float checkpointRepeat = 15;
+	public static float nextCheckpoint;
+
+	public static float superspeedInitScore = 10;
+	public static float superspeedRepeat = 15;
+	public static float nextSuperspeed;
+
+	public static float slowdownInitScore = 10;
+	public static float slowdownRepeat = 15;
+	public static float nextSlowdown;
+
+	public static float lifecoinInitScore = 1;
+	public static float lifecoinRepeat = 2;
+	public static float lifecoinRedeem = 5;
+	public static float lifecoinCollected = 0;
 
 
 	void Awake (){

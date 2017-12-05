@@ -31,6 +31,10 @@ public class UIManager : MonoBehaviour {
 	public GameObject HighScoreStar;
 	public GameObject Sound;
 	public GameObject CheckpointButton;
+	//GameObject CheckpointButton;
+	Animator CheckpointAnimator;
+	AnimationClip EnableCheckpointClip;
+
 	public GameObject SuperSpeedButton;
 	public GameObject SlowDownButton;
 	public GameObject SuperSpeedTransparent;
@@ -82,6 +86,11 @@ public class UIManager : MonoBehaviour {
 	int HintSuperspeedShown = 0;
 	int HintSlowdownShown = 0;
 	int LifecoinShown = 0;
+
+	bool firstTimeCheckpoint = true;
+	bool firstTimeSlowDown = true;
+	bool firstTimeSuperSpeed = true;
+	bool firstTimeQuitScreen = true;
 
 	//string[] HintsAndAds = new string[] {"ads", "earncoins", "slowdown", "superspeed", "checkpoint", "lifecoin"};
 	int hintSize;
@@ -220,9 +229,19 @@ public class UIManager : MonoBehaviour {
 		print ("Score: " + GameManagerScript.score);
 		if (gameOverFlag) {
 		//if (gameOverFlag && !checkpoint) {
+			print ("Checkpoint?: " + checkpoint);
 			if (LifeTaken) {
 				print ("Life taken");
 				LifeTaken = false;
+			} else if (checkpoint) {
+				ObstacleManagerScript.ResetToCheckpoint ();
+				gameOverFlag = false;
+				ResetCheckpointValues ();
+				GameManagerScript.score = UIManager.currentCheckpointScore;
+				print ("Updating score: " + GameManagerScript.score);
+				GameManagerScript.DisplayScore();
+				GameManager.nextSuperspeed = currentCheckpointScore + GameManager.superspeedRepeat;
+				GameManager.nextSlowdown = currentCheckpointScore + GameManager.slowdownRepeat;
 			} else {
 				print ("Life not taken");
 				ObstacleManagerScript.ResetObstacles ();
@@ -230,6 +249,9 @@ public class UIManager : MonoBehaviour {
 				GameManagerScript.score = 0;
 				print ("Updating score: " + GameManagerScript.score);
 				GameManagerScript.DisplayScore();
+				DisableCheckpointButton ();
+				DisableSuperSpeedButton ();
+				DisableSlowDownButton ();
 				GameManager.nextCheckpoint = GameManager.checkpointInitScore;
 				GameManager.nextSuperspeed = GameManager.superspeedInitScore;
 				GameManager.nextSlowdown = GameManager.slowdownInitScore;
@@ -278,9 +300,12 @@ public class UIManager : MonoBehaviour {
 		FadeInBackground ();
 		CalculateLife ();
 		EnableScoreLabels ();
-		DisableCheckpointButton ();
-		DisableSuperSpeedButton ();
-		DisableSlowDownButton ();
+//		DisableCheckpointButton ();
+//		DisableSuperSpeedButton ();
+//		DisableSlowDownButton ();
+		HideCheckpointButton ();
+		HideSuperSpeedButton ();
+		HideSlowDownButton ();
 		EnableHintScreen ();
 		if (celebrateHighScore) {
 			EnableCelebrateHighScore ();
@@ -392,7 +417,10 @@ public class UIManager : MonoBehaviour {
 
 
 	public void SlideInQuitScreen(){
-
+		if (firstTimeQuitScreen) {
+			QuitScreen.GetComponent<Animator> ().runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load ("Animations/QuitPanel", typeof(RuntimeAnimatorController)));
+			firstTimeQuitScreen = false;
+		}
 		QuitScreen.GetComponent<Animator>().SetBool ("SlideInQuitScreen", true);
 	}
 
@@ -445,7 +473,9 @@ public class UIManager : MonoBehaviour {
 //	
 
 	public void EnableCheckpointButton(){
+
 		IsCheckpointActive = true;
+		//CheckpointButton.GetComponent<Animator>().SetBool ("EnableCheckpointButton", true);
 		CheckpointButton.GetComponent<Animator>().SetBool ("EnableCheckpointButton", true);
 		CheckpointButton.GetComponentInChildren<Text> ().text = "+";
 		CheckpointButton.GetComponentInChildren<Text> ().fontSize = 80;
@@ -459,6 +489,11 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void ShowCheckpointButton(){
+		if (firstTimeCheckpoint) {
+			CheckpointButton.GetComponent<Animator> ().runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load ("Animations/CheckpointButton", typeof(RuntimeAnimatorController)));
+			firstTimeCheckpoint = false;
+		}
+
 		CheckpointButton.GetComponent<Image>().color = new Color (1, 1, 1, 1);
 		CheckpointButton.GetComponentInChildren<Text>().color = new Color (1, 1, 1, 1);
 		CheckpointButton.GetComponent<Button> ().interactable = true;
@@ -539,6 +574,10 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void ShowSuperSpeedButton(){
+		if (firstTimeSuperSpeed) {
+			SuperSpeedButton.GetComponent<Animator> ().runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load ("Animations/SuperSpeedButton", typeof(RuntimeAnimatorController)));
+			firstTimeSuperSpeed = false;
+		}
 		SuperSpeedButton.GetComponent<Image>().color = new Color (1, 1, 1, 1);
 		SuperSpeedButton.GetComponent<Button> ().interactable = true;
 	}
@@ -594,6 +633,10 @@ public class UIManager : MonoBehaviour {
 	}
 
 	public void ShowSlowDownButton(){
+		if (firstTimeSlowDown) {
+			SlowDownButton.GetComponent<Animator> ().runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load ("Animations/SlowDownButton", typeof(RuntimeAnimatorController)));
+			firstTimeSlowDown = false;
+		}
 		SlowDownButton.GetComponent<Image>().color = new Color (1, 1, 1, 1);
 		SlowDownButton.GetComponent<Button> ().interactable = true;
 	}
@@ -606,8 +649,10 @@ public class UIManager : MonoBehaviour {
 	void CalculateLife (){
 		if (PlayerPrefs.GetFloat("lifeAvailable") == 0) {
 			LifeCoins.transform.FindChild ("LifeCoinButton").GetComponent<Image> ().sprite = LifeOff;
+			LifeCoins.transform.FindChild ("LifeCoin glow").gameObject.SetActive (false);
 		} else {
 			LifeCoins.transform.FindChild ("LifeCoinButton").GetComponent<Image> ().sprite = LifeOn;
+			LifeCoins.transform.FindChild ("LifeCoin glow").gameObject.SetActive (true);
 			LifeCoins.transform.FindChild ("LifeAvailable").GetComponent<Text> ().text = PlayerPrefs.GetFloat("lifeAvailable").ToString();
 		}
 	}
@@ -620,6 +665,7 @@ public class UIManager : MonoBehaviour {
 			if (PlayerPrefs.GetFloat ("lifeAvailable") == 0) {
 				LifeCoins.transform.FindChild ("LifeAvailable").GetComponent<Text> ().text = "";
 				LifeCoins.transform.FindChild ("LifeCoinButton").GetComponent<Image> ().sprite = LifeOff;
+				LifeCoins.transform.FindChild ("LifeCoin glow").gameObject.SetActive (false);
 			} else {
 				LifeCoins.transform.FindChild ("LifeAvailable").GetComponent<Text> ().text = PlayerPrefs.GetFloat ("lifeAvailable").ToString ();
 			}

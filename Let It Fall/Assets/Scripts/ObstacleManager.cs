@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class ObstacleManager : MonoBehaviour {
 
 	public GameObject LifeCoin;
+	GameManager GameManagerScript;
 
 	public Obstacle[] obstacles;
 	Obstacle[] sortedObstacles;
@@ -80,6 +81,8 @@ public class ObstacleManager : MonoBehaviour {
 	}
 
 	void Awake(){
+		GameManagerScript = FindObjectOfType<GameManager>();
+
 		sortedObstacles = obstacles.OrderBy(c => c.priority).ToArray();
 	}
 
@@ -134,11 +137,18 @@ public class ObstacleManager : MonoBehaviour {
 				randomNum = Random.Range (0, 25);
 			else if (obstacleCount < 90)
 				randomNum = Random.Range (0, 27);
-			else
+			else if (obstacleCount < 100)
 				randomNum = Random.Range (0, 29);
+			else
+				randomNum = Random.Range (0, 31);
 
 			//randomNum = Random.Range(0,obstacles.Length);
-			obstacle = sortedObstacles [randomNum];
+			if (GameManagerScript.Testing) {
+				print("Generate obstacle: " + Mathf.RoundToInt (obstacleCount % sortedObstacles.Length));
+				obstacle = sortedObstacles [Mathf.RoundToInt (obstacleCount % sortedObstacles.Length)];
+			} else {
+				obstacle = sortedObstacles [randomNum];
+			}
 			currentObstacle = Instantiate (obstacle.obstacleObj, new Vector2 (obstacle.xPos, currentObstacle.transform.position.y - currentDistance), Quaternion.identity);
 			currentObstacle.tag = "obstacle";
 
