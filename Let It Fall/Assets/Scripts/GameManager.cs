@@ -9,6 +9,12 @@ public class GameManager : MonoBehaviour {
 	AudioManager AudioManagerScript;
 	ObstacleManager ObstacleManagerScript;
 
+	bool shakeCam = false;
+	float shakeDuration = 0.2f;
+	float duration;
+	public Transform camTransform;
+	Vector3 initCamPos;
+
 	//public float speed = 3f;
 	float initialSpeed = 3.5f;
 	float finalSpeed = 6f;
@@ -21,7 +27,6 @@ public class GameManager : MonoBehaviour {
 	public Text scoreText;
 	public Text currentScoreText;
 	public Text highestScoreText;
-	public Text lifeCoinsText;
 
 	[HideInInspector]
 	public bool collisionFlag = false;
@@ -98,37 +103,15 @@ public class GameManager : MonoBehaviour {
 		speed = initialSpeed;
 
 		lifecoinCollected = PlayerPrefs.GetFloat ("lifeCoins");
-		//Play theme music
-		AudioManagerScript.Play("Theme");
 
-//		//testing
-//		if (IsTesting) {
-//			checkpointInitScore = 10;
-//			checkpointRepeat = 15;
-//
-//			superspeedInitScore = 10;
-//			superspeedRepeat = 15;
-//
-//			slowdownInitScore = 10;
-//			slowdownRepeat = 15;
-//
-//			lifecoinInitScore = 1;
-//			lifecoinRepeat = 2;
-//			lifecoinRedeem = 5;
-//		}
+		initCamPos = camTransform.localPosition;
+		duration = shakeDuration;
 	}
 	
 
 	void Update () {
 		//update speed
-		//if (speed < finalSpeed)
 		speed = IncreaseSpeed(ObstacleManagerScript.obstacleCount);
-		if (lifecoinCollected == lifecoinRedeem) {
-			PlayerPrefs.SetFloat ("lifeAvailable", PlayerPrefs.GetFloat ("lifeAvailable") + 1);
-			PlayerPrefs.SetFloat ("lifeCoins", 0);
-			lifecoinCollected = 0;
-			print ("Time to redeem lifecoins");
-		}
 
 		if (UIManagerScript.IsSuperSpeed)
 			speed = superSpeed;
@@ -136,29 +119,24 @@ public class GameManager : MonoBehaviour {
 		if (UIManagerScript.IsSlowDown)
 			speed = slowdownSpeed;
 
-		//print ("Speed: " + speed + ": flag: " + FindObjectOfType<UIManager>().IsSuperSpeed);
 		if (collisionFlag) {
+			AudioManagerScript.Stop("Theme");
+			DisplayScore ();
+			SetBallFallingFlag (false);
+			UIManagerScript.GameOver ();
+			shakeCam = true;
+			collisionFlag = false;
+		}
 
-			//if (!FindObjectOfType<UIManager> ().IsSuperSpeed) {
-
-				DisplayScore ();
-
-//				if (UIManager.checkpoint) {
-//					score = UIManager.currentCheckpointScore;
-//				} else {
-//					score = 0;
-//				}
-//				scoreText.text = "" + score;
-				SetBallFallingFlag (false);
-				//FindObjectOfType<ButtonBehaviour>().GameOverScreen();
-				UIManagerScript.GameOver ();
-				//Application.LoadLevel("Level 2");
-				//collisionFlag = false;
-//			FindObjectOfType<ObstacleManager> ().ResetObstacles();
-//			DisplayScore ();
-
-				collisionFlag = false;
-			//}
+		if (shakeCam) {
+			if (duration > 0) {
+				camTransform.localPosition = initCamPos + Random.insideUnitSphere * 0.2f;
+				duration -= Time.deltaTime * 1;
+			} else {
+				camTransform.localPosition = initCamPos;
+				duration = shakeDuration;
+				shakeCam = false;
+			}
 		}
 	}
 
@@ -185,13 +163,9 @@ public class GameManager : MonoBehaviour {
 	public void DisplayScore(){
 
 		highestScore = PlayerPrefs.GetFloat ("highscore", highScore);
-
-//		currentScoreText.text = score.ToString() + "\nSCORE";
-//		highestScoreText.text = highestScore.ToString() + "\nHIGHEST";
 		scoreText.text = score.ToString();
 		currentScoreText.text = score.ToString();
 		highestScoreText.text = highestScore.ToString();
-		lifeCoinsText.text = PlayerPrefs.GetFloat ("lifeCoins").ToString ();
 	}
 
 	public static void SetBallFallingFlag(bool flag){
@@ -204,15 +178,7 @@ public class GameManager : MonoBehaviour {
 	public static bool StopMovement(){
 		return ballFallingFlag && !tempVar;
 	}
-
-
-//	public static void SetObstacleCount(float count){
-//		obstacleCount = count;
-//	}
-//	public static float GetObstacleCount(){
-//		return obstacleCount;
-//	}
-
+		
 
 	public static float GetSpeed(){
 		return speed;
