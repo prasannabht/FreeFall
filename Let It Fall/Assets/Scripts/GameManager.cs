@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour {
 	public static float rightX;
 	public static float topY;
 	public static float bottomY;
-
+//
 //	public static float checkpointInitScore = 50;
 //	public static float checkpointRepeat = 30;
 //	public static float nextCheckpoint;
@@ -55,25 +55,25 @@ public class GameManager : MonoBehaviour {
 //	public static float slowdownRepeat = 30;
 //	public static float nextSlowdown;
 //
-//	public static float lifecoinInitScore = 30;
-//	public static float lifecoinRepeat = 10;
+//	public static float lifecoinInitScore = 20;
+//	public static float lifecoinRepeat = 5;
 //	public static float lifecoinRedeem = 20;
 //	public static float lifecoinCollected = 0;
 
 	//For testing
-	public static float checkpointInitScore = 10;
-	public static float checkpointRepeat = 15;
+	public static float checkpointInitScore = 5;
+	public static float checkpointRepeat = 10;
 	public static float nextCheckpoint;
 
-	public static float superspeedInitScore = 10;
-	public static float superspeedRepeat = 15;
+	public static float superspeedInitScore = 5;
+	public static float superspeedRepeat = 10;
 	public static float nextSuperspeed;
 
-	public static float slowdownInitScore = 10;
-	public static float slowdownRepeat = 15;
+	public static float slowdownInitScore = 5;
+	public static float slowdownRepeat = 10;
 	public static float nextSlowdown;
 
-	public static float lifecoinInitScore = 1;
+	public static float lifecoinInitScore = 5;
 	public static float lifecoinRepeat = 2;
 	public static float lifecoinRedeem = 5;
 	public static float lifecoinCollected = 0;
@@ -153,6 +153,9 @@ public class GameManager : MonoBehaviour {
 		}
 		if (score == nextSlowdown) {
 			UIManager.enableSlowDown = true;
+		}
+		if (score == lifecoinInitScore) {
+			UIManager.enableCoinsCounter = true;
 		}
 		if (score > PlayerPrefs.GetFloat ("highscore")) {
 			UIManager.celebrateHighScore = true;

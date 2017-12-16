@@ -8,25 +8,29 @@ public class UIManager : MonoBehaviour {
 	GameManager GameManagerScript;
 	AudioManager AudioManagerScript;
 	ObstacleManager ObstacleManagerScript;
+	AdManager AdManagerScript;
 
-	//public Animator StartScreenAnimator;
-	//public Animator QuitScreenAnimator;
 	public Animator BackgroundAnimator;
 	public GameObject StartScreenAnimator;
-	//public Animator CheckpointAnimator;
-	//public Animator SuperSpeedAnimator;
-	//public Animator SlowDownAnimator;
-//	public Animator BackgroundHills;
-//	public Animator BackgroundColor;
-//	public Animator BallAnimator;
+	public GameObject Canvas;
 	public GameObject StartScreenButtons;
+
+	public GameObject BonusButtons;
+	public GameObject CheckpointButton;
+	public GameObject SuperSpeedButton;
+	public GameObject SlowDownButton;
+	public GameObject CoinsCounter;
+	public GameObject SuperSpeedTransparent;
+
 	public GameObject QuitScreen;
+	public GameObject AboutScreen;
 	public GameObject ChanceScreen;
 	public GameObject ChanceButton;
 	public GameObject ChanceLabel;
 	public GameObject Title;
 	public GameObject TitleBG;
 	public GameObject AnotherChance;
+	public GameObject CoinsCreditedPopup;
 	public GameObject PauseButton;
 	public GameObject ScoreText;
 	public GameObject CelebrateHighScoreObj;
@@ -34,17 +38,8 @@ public class UIManager : MonoBehaviour {
 	public GameObject HighScoreLabel;
 	public GameObject HighScoreStar;
 	public GameObject Sound;
-	public GameObject CheckpointButton;
-	//GameObject CheckpointButton;
-	Animator CheckpointAnimator;
-	AnimationClip EnableCheckpointClip;
-
-	public GameObject SuperSpeedButton;
-	public GameObject SlowDownButton;
-	public GameObject SuperSpeedTransparent;
 
 	public GameObject HintScreen;
-
 	public Sprite SoundOn;
 	public Sprite SoundOff;
 	public Sprite checkpointOn;
@@ -63,10 +58,12 @@ public class UIManager : MonoBehaviour {
 	public static bool enableCheckpoint = false;
 	public static bool enableSuperSpeed = false;
 	public static bool enableSlowDown = false;
+	public static bool enableCoinsCounter = false;
 	public static float currentCheckpointScore;
 	public static bool checkpoint = false;
 
 	bool chanceScreen = false;
+	bool aboutScreen = false;
 
 	bool IsCheckpointShown = false;
 	bool IsCheckpointActive = false;
@@ -98,8 +95,10 @@ public class UIManager : MonoBehaviour {
 	bool firstTimeSuperSpeed = true;
 	bool firstTimeQuitScreen = true;
 
+
 	//string[] HintsAndAds = new string[] {"ads", "earncoins", "slowdown", "superspeed", "checkpoint", "lifecoin"};
 	int hintSize;
+
 
 	GameManager myGameManager;
 
@@ -126,6 +125,7 @@ public class UIManager : MonoBehaviour {
 		GameManagerScript = FindObjectOfType<GameManager>();
 		ObstacleManagerScript = FindObjectOfType<ObstacleManager>();
 		AudioManagerScript = FindObjectOfType<AudioManager>();
+		AdManagerScript = FindObjectOfType<AdManager>();
 
 		//hintSize = HintsAndAds.Length;
 	}
@@ -133,12 +133,17 @@ public class UIManager : MonoBehaviour {
 	void Start(){
 		//SlideInStartScreen ();
 		DisablePauseAndScore ();
-		FadeInBackground ();
+		//FadeInBackground ();
 		DisableScoreLabels ();
 		DisableCelebrateHighScore ();
 		DisableHighScoreStar ();
 		EnableStartScreenAnimation ();
-		//MoveBallToMiddle ();
+
+		//Bonus Buttons
+		HideCheckpointButton ();
+		HideSuperSpeedButton ();
+		HideSlowDownButton ();
+		HideCoinsCounterButton ();
 
 		if (PlayerPrefs.GetInt("sound")==1) {
 			Sound.GetComponent<Image> ().sprite = SoundOn;
@@ -147,6 +152,9 @@ public class UIManager : MonoBehaviour {
 		}
 
 		hasGameStarted = false;
+
+		//Play theme music
+		AudioManagerScript.Play("StartTheme");
 
 //		//test
 //		hasGameStarted = true;
@@ -159,6 +167,8 @@ public class UIManager : MonoBehaviour {
 			if (GameManager.IsBallFalling ()) {
 				Title.SetActive (false);
 				TitleBG.SetActive (false);
+//				Destroy(Title);
+//				Destroy (TitleBG);
 				GameManager.SetBallFallingFlag (false);
 				GameManagerScript.DisplayScore ();
 				SlideInStartScreen ();
@@ -166,12 +176,18 @@ public class UIManager : MonoBehaviour {
 				DisableHighScoreStar ();
 				EnableScoreLabels ();
 				FadeInBackground ();
-				HideCheckpointButton ();
-				HideSuperSpeedButton ();
-				HideSlowDownButton ();
+
+				SlideOutBonusButtons ();
+
+				//Play theme music
+				AudioManagerScript.Stop ("Theme");
+				AudioManagerScript.Play ("StartTheme");
 
 			} else if (chanceScreen) {
 				BackFromChance ();
+			
+			} else if (aboutScreen) {
+					BackFromAbout ();
 			} else {
 				if (!quitDisplayed) {
 					QuitGameScreen ();
@@ -188,18 +204,29 @@ public class UIManager : MonoBehaviour {
 
 		if (enableCheckpoint){
 			print ("Enable checkpoint");
-			EnableCheckpointButton ();
+			IsCheckpointActive = true;
+			ShowCheckpointButton ();
 			enableCheckpoint = false;
 		}
 
 		if (enableSuperSpeed) {
-			EnableSuperSpeedButton();
+			print ("Enable superspeed");
+			IsSuperSpeedActive = true; 
+			ShowSuperSpeedButton();
 			enableSuperSpeed = false;
 		}
 
 		if (enableSlowDown) {
-			EnableSlowDownButton();
+			print ("Enable Slowdown");
+			IsSlowDownActive = true;
+			ShowSlowDownButton();
 			enableSlowDown = false;
+		}
+
+		if (enableCoinsCounter) {
+			print ("Enable CoinsCounter");
+			ShowCoinsCounterButton ();
+			enableCoinsCounter = false;
 		}
 
 		if (IsSuperSpeed) {
@@ -225,6 +252,28 @@ public class UIManager : MonoBehaviour {
 			//show hint
 		}
 
+		if (AdManagerScript.AdReturn) {
+			
+			if (AdManagerScript.AdSeen) {
+				print ("Ad Seen");
+				CoinsCreditedPopup.GetComponent<Animator> ().Play ("CoinsCredited");
+				//AnotherChance.GetComponent<Animator> ().SetBool ("CoinsCredited", true);
+				//yield return new WaitUntil (() => AdManagerScript.AdReturn);
+				PlayerPrefs.SetFloat ("lifeCoins", PlayerPrefs.GetFloat ("lifeCoins") + GameManager.lifecoinRedeem / 2);
+				if (PlayerPrefs.GetFloat("lifeCoins") >= GameManager.lifecoinRedeem) {
+					//AnotherChance.transform.FindChild ("LifeAvailable").GetComponent<Text> ().text = "";
+					AnotherChance.transform.FindChild ("HeartButton").GetComponent<Image> ().sprite = LifeOn;
+					AnotherChance.transform.FindChild ("LifeCoin glow").gameObject.SetActive (true);
+					AnotherChance.transform.FindChild ("CoinsCounter").GetComponent<Text> ().text = PlayerPrefs.GetFloat ("lifeCoins").ToString ();
+				} else {
+					AnotherChance.transform.FindChild ("CoinsCounter").GetComponent<Text> ().text = PlayerPrefs.GetFloat ("lifeCoins").ToString ();
+				}
+
+				AdManagerScript.AdSeen = false;
+			}
+			AdManagerScript.AdReturn = false;
+		}
+
 	}
 
 	public void StartGame(){
@@ -233,6 +282,7 @@ public class UIManager : MonoBehaviour {
 		StartScreenButtons.transform.FindChild ("StartButtonGlow").gameObject.SetActive (false);
 
 		//Play theme music
+		AudioManagerScript.Stop("StartTheme");
 		AudioManagerScript.Play("Theme");
 
 		SlideOutStartScreen ();
@@ -242,7 +292,7 @@ public class UIManager : MonoBehaviour {
 		print ("Score: " + GameManagerScript.score);
 		if (gameOverFlag) {
 		//if (gameOverFlag && !checkpoint) {
-			print ("Checkpoint?: " + checkpoint);
+
 			if (LifeTaken) {
 				print ("Life taken");
 				ObstacleManagerScript.ResetObstacles ();
@@ -263,9 +313,11 @@ public class UIManager : MonoBehaviour {
 				GameManagerScript.score = 0;
 				print ("Updating score: " + GameManagerScript.score);
 				GameManagerScript.DisplayScore();
-				DisableCheckpointButton ();
-				DisableSuperSpeedButton ();
-				DisableSlowDownButton ();
+
+				HideCheckpointButton ();
+				HideSuperSpeedButton ();
+				HideSlowDownButton ();
+
 				GameManager.nextCheckpoint = GameManager.checkpointInitScore;
 				GameManager.nextSuperspeed = GameManager.superspeedInitScore;
 				GameManager.nextSlowdown = GameManager.slowdownInitScore;
@@ -291,9 +343,11 @@ public class UIManager : MonoBehaviour {
 		FadeOutBackground ();
 		DisableScoreLabels ();
 		DisableCelebrateHighScore ();
-		ShowCheckpointButton ();
-		ShowSuperSpeedButton ();
-		ShowSlowDownButton ();
+		UpdateCoinsCounter ();
+		SlideInBonusButtons ();
+		//ShowCheckpointButton ();
+		//ShowSuperSpeedButton ();
+		//ShowSlowDownButton ();
 
 		HideAllHints ();
 
@@ -317,9 +371,10 @@ public class UIManager : MonoBehaviour {
 //		DisableCheckpointButton ();
 //		DisableSuperSpeedButton ();
 //		DisableSlowDownButton ();
-		HideCheckpointButton ();
-		HideSuperSpeedButton ();
-		HideSlowDownButton ();
+//		HideCheckpointButton ();
+//		HideSuperSpeedButton ();
+//		HideSlowDownButton ();
+		SlideOutBonusButtons();
 		EnableHintScreen ();
 		if (celebrateHighScore) {
 			EnableCelebrateHighScore ();
@@ -331,7 +386,8 @@ public class UIManager : MonoBehaviour {
 			SuperSpeedTransparent.SetActive (false);
 		}
 		//MoveOutBackgroundHills ();
-
+		AudioManagerScript.Stop("Theme");
+		AudioManagerScript.Play("StartTheme");
 	}
 
 	public void PauseGame(){
@@ -344,9 +400,13 @@ public class UIManager : MonoBehaviour {
 		DisableHighScoreStar ();
 		FadeInBackground ();
 		EnableScoreLabels ();
-		HideCheckpointButton ();
-		HideSuperSpeedButton ();
-		HideSlowDownButton ();
+//		HideCheckpointButton ();
+//		HideSuperSpeedButton ();
+//		HideSlowDownButton ();
+		SlideOutBonusButtons();
+
+		AudioManagerScript.Stop("Theme");
+		AudioManagerScript.Play("StartTheme");
 	}
 
 	public void QuitGameScreen(){
@@ -390,6 +450,12 @@ public class UIManager : MonoBehaviour {
 		chanceScreen = false;
 		SlideInStartScreen ();
 		SlideOutChanceScreen ();
+	}
+
+	public void BackFromAbout(){
+		aboutScreen = false;
+		SlideInStartScreen ();
+		SlideOutAboutScreen ();
 	}
 
 	public void SetSound(){
@@ -452,35 +518,51 @@ public class UIManager : MonoBehaviour {
 
 
 	public void SlideInQuitScreen(){
-		if (firstTimeQuitScreen) {
-			QuitScreen.GetComponent<Animator> ().runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load ("Animations/QuitPanel", typeof(RuntimeAnimatorController)));
-			firstTimeQuitScreen = false;
-		}
-		QuitScreen.GetComponent<Animator>().SetBool ("SlideInQuitScreen", true);
+//		if (firstTimeQuitScreen) {
+//			QuitScreen.GetComponent<Animator> ().runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load ("Animations/QuitPanel", typeof(RuntimeAnimatorController)));
+//			firstTimeQuitScreen = false;
+//		}
+
+		QuitScreen.GetComponent<Animator>().SetBool ("SlideInMenu", true);
+		//QuitScreenObj.GetComponent<Animator>().SetBool ("SlideInMenu", true);
 	}
 
 	public void SlideOutQuitScreen(){
 
-		QuitScreen.GetComponent<Animator>().SetBool ("SlideInQuitScreen", false);
+		QuitScreen.GetComponent<Animator>().SetBool ("SlideInMenu", false);
 	}
 
 	public void SlideInStartScreen(){
 
-		StartScreenButtons.GetComponent<Animator>().SetBool ("SlideInStartScreen", true);
+		StartScreenButtons.GetComponent<Animator>().SetBool ("SlideInMenu", true);
 	}
 
 	public void SlideOutStartScreen(){
 
-		StartScreenButtons.GetComponent<Animator>().SetBool ("SlideInStartScreen", false);
+		StartScreenButtons.GetComponent<Animator>().SetBool ("SlideInMenu", false);
 	}
 
 	public void SlideInChanceScreen(){
-		ChanceScreen.GetComponent<Animator>().SetBool ("SlideInChanceScreen", true);
+		ChanceScreen.GetComponent<Animator>().SetBool ("SlideInMenu", true);
 	}
 
 	public void SlideOutChanceScreen(){
 
-		ChanceScreen.GetComponent<Animator>().SetBool ("SlideInChanceScreen", false);
+		ChanceScreen.GetComponent<Animator>().SetBool ("SlideInMenu", false);
+	}
+
+	public void SlideInAboutScreen(){
+		//Instantiate (AboutScreen, AboutScreen.transform.position, Quaternion.identity, Canvas.transform);
+		//AboutScreen.GetComponent<Animator>().SetBool ("SlideInMenu", true);
+		AboutScreen.GetComponent<Animator>().Play("SlideInMenu");
+		//AboutScreen.GetComponent<Animation> ().Play ("SlideInMenu");
+	}
+
+	public void SlideOutAboutScreen(){
+
+		//AboutScreen.GetComponent<Animator>().SetBool ("SlideInMenu", false);
+		AboutScreen.GetComponent<Animator>().Play("SlideOutMenu");
+
 	}
 
 	public void FadeInBackground(){
@@ -494,59 +576,31 @@ public class UIManager : MonoBehaviour {
 	public static bool GameStarted(){
 		return hasGameStarted;
 	}
-//
-//	public void MoveBallToTop(){
-//
-//		BallAnimator.SetBool ("BallAtTop", true);
-//	}
-//
-//	public void MoveBallToMiddle(){
-//
-//		BallAnimator.SetBool ("BallAtTop", false);
-//	}
-//
-//	public void MoveInBackgroundHills(){
-//
-//		BackgroundHills.SetBool ("GameStarted", true);
-//	}
-//
-//	public void MoveOutBackgroundHills(){
-//
-//		BackgroundHills.SetBool ("GameStarted", false);
-//	}
-//	
 
-	public void EnableCheckpointButton(){
 
-		IsCheckpointActive = true;
-		//CheckpointButton.GetComponent<Animator>().SetBool ("EnableCheckpointButton", true);
-		CheckpointButton.GetComponent<Animator>().SetBool ("EnableCheckpointButton", true);
-		CheckpointButton.GetComponentInChildren<Text> ().text = "+";
-		CheckpointButton.GetComponentInChildren<Text> ().fontSize = 80;
-		CheckpointButton.GetComponent<Image> ().sprite = checkpointOn;
 
-		IsCheckpointShown = true;
+	//BONUS BUTTONS
+	void SlideInBonusButtons(){
+		BonusButtons.GetComponent<Animator>().SetBool ("SlideInBonusButtons", true);
 	}
 
-	public void DisableCheckpointButton(){
-		CheckpointButton.GetComponent<Animator>().SetBool ("EnableCheckpointButton", false);
+	void SlideOutBonusButtons(){
+		BonusButtons.GetComponent<Animator>().SetBool ("SlideInBonusButtons", false);
 	}
 
 	public void ShowCheckpointButton(){
-		if (firstTimeCheckpoint) {
-			CheckpointButton.GetComponent<Animator> ().runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load ("Animations/CheckpointButton", typeof(RuntimeAnimatorController)));
-			firstTimeCheckpoint = false;
+		CheckpointButton.SetActive (true);
+		if (IsCheckpointActive) {
+			CheckpointButton.GetComponent<Image> ().sprite = checkpointOn;
+			CheckpointButton.GetComponentInChildren<Text> ().text = "+";
+			CheckpointButton.GetComponentInChildren<Text> ().fontSize = 80;
+		} else {
+			CheckpointButton.GetComponent<Image> ().sprite = checkpointOff;
 		}
-
-		CheckpointButton.GetComponent<Image>().color = new Color (1, 1, 1, 1);
-		CheckpointButton.GetComponentInChildren<Text>().color = new Color (1, 1, 1, 1);
-		CheckpointButton.GetComponent<Button> ().interactable = true;
 	}
 
 	public void HideCheckpointButton(){
-		CheckpointButton.GetComponent<Image>().color = new Color (1, 1, 1, 0);
-		CheckpointButton.GetComponentInChildren<Text>().color = new Color (1, 1, 1, 0);
-		CheckpointButton.GetComponent<Button> ().interactable = false;
+		CheckpointButton.SetActive (false);
 	}
 
 	public void AddCheckpoint(){
@@ -558,21 +612,39 @@ public class UIManager : MonoBehaviour {
 			checkpoint = true;
 			print ("Checkpoint at: " + currentCheckpointScore);
 			ObstacleManagerScript.SaveCheckpointDetails ();
-			//HideCheckpointButton ();
 			CheckpointButton.GetComponentInChildren<Text> ().text = currentCheckpointScore.ToString ();
 			CheckpointButton.GetComponentInChildren<Text> ().fontSize = 40;
-			CheckpointButton.GetComponent<Image> ().sprite = checkpointOff;
 
 			IsCheckpointActive = false;
+
+			ShowCheckpointButton ();
 		}
 	}
-
-
+		
 	void ResetCheckpointValues(){
 		checkpoint = false;
 		GameManager.nextCheckpoint = currentCheckpointScore + GameManager.checkpointRepeat;
 		print ("next checkpoint: " + GameManager.nextCheckpoint);
 	}
+		
+
+
+
+	public void ShowSuperSpeedButton(){
+		SuperSpeedButton.SetActive (true);
+		if (IsSuperSpeedActive) {
+			SuperSpeedButton.GetComponent<Image> ().sprite = superspeedOn;
+			SuperSpeedButton.GetComponent<Button> ().interactable = true;
+		} else {
+			SuperSpeedButton.GetComponent<Image> ().sprite = superspeedOff;
+			SuperSpeedButton.GetComponent<Button> ().interactable = false;
+		}
+	}
+
+	public void HideSuperSpeedButton(){
+		SuperSpeedButton.SetActive (false);
+	}
+
 
 	public void StartSuperSpeed(){
 		if (IsSuperSpeedActive) {
@@ -581,11 +653,8 @@ public class UIManager : MonoBehaviour {
 			SuperSpeedStartScore = GameManagerScript.score;
 			print (Time.time + ": Super Speed started at obstacle: " + SuperSpeedStartScore);
 			SuperSpeedButton.GetComponent<Image> ().sprite = superspeedOff;
+			SlideOutBonusButtons();
 			IsSuperSpeedActive = false;
-
-			HideCheckpointButton ();
-			HideSuperSpeedButton ();
-			HideSlowDownButton ();
 		}
 	}
 
@@ -600,38 +669,25 @@ public class UIManager : MonoBehaviour {
 		float interval = GameManager.superspeedRepeat;
 		GameManager.nextSuperspeed = currScore + interval;
 
-		ShowCheckpointButton ();
-		ShowSuperSpeedButton ();
-		ShowSlowDownButton ();
+		SlideInBonusButtons();
 	}
 
-	public void EnableSuperSpeedButton(){
-		IsSuperSpeedActive = true; 
-		SuperSpeedButton.GetComponent<Animator>().SetBool ("EnableSuperSpeedButton", true);
-		SuperSpeedButton.GetComponent<Image> ().sprite = superspeedOn;
 
-		IsSuperSpeedButtonShown = true;
-	}
 
-	public void DisableSuperSpeedButton(){
-		SuperSpeedButton.GetComponent<Animator>().SetBool ("EnableSuperSpeedButton", false);
-	}
-
-	public void ShowSuperSpeedButton(){
-		if (firstTimeSuperSpeed) {
-			SuperSpeedButton.GetComponent<Animator> ().runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load ("Animations/SuperSpeedButton", typeof(RuntimeAnimatorController)));
-			firstTimeSuperSpeed = false;
+	public void ShowSlowDownButton(){
+		SlowDownButton.SetActive (true);
+		if (IsSlowDownActive) {
+			SlowDownButton.GetComponent<Image> ().sprite = slowdownOn;
+			SlowDownButton.GetComponent<Button> ().interactable = true;
+		} else {
+			SlowDownButton.GetComponent<Image> ().sprite = slowdownOff;
+			SlowDownButton.GetComponent<Button> ().interactable = false;
 		}
-		SuperSpeedButton.GetComponent<Image>().color = new Color (1, 1, 1, 1);
-		SuperSpeedButton.GetComponent<Button> ().interactable = true;
 	}
 
-	public void HideSuperSpeedButton(){
-		SuperSpeedButton.GetComponent<Image>().color = new Color (1, 1, 1, 0);
-		SuperSpeedButton.GetComponent<Button> ().interactable = false;
+	public void HideSlowDownButton(){
+		SlowDownButton.SetActive (false);
 	}
-
-
 
 	public void StartSlowDown(){
 		if (IsSlowDownActive) {
@@ -640,11 +696,8 @@ public class UIManager : MonoBehaviour {
 			SlowDownStartScore = GameManagerScript.score;
 			print (Time.time + ": Slow DOwn started at obstacle: " + SlowDownStartScore);
 			SlowDownButton.GetComponent<Image> ().sprite = slowdownOff;
+			SlideOutBonusButtons();
 			IsSlowDownActive = false;
-
-			HideCheckpointButton ();
-			HideSuperSpeedButton ();
-			HideSlowDownButton ();
 		}
 	}
 
@@ -658,37 +711,22 @@ public class UIManager : MonoBehaviour {
 		float currScore = GameManagerScript.score;
 		float interval = GameManager.slowdownRepeat;
 		GameManager.nextSlowdown = currScore + interval;
+		SlideInBonusButtons();
 
-		ShowCheckpointButton ();
-		ShowSuperSpeedButton ();
-		ShowSlowDownButton ();
 	}
 
-	public void EnableSlowDownButton(){
-		IsSlowDownActive = true; 
-		SlowDownButton.GetComponent<Animator>().SetBool ("EnableSlowDownButton", true);
-		SlowDownButton.GetComponent<Image> ().sprite = slowdownOn;
-
-		IsSlowDownButtonShown = true;
+	void ShowCoinsCounterButton(){
+		CoinsCounter.SetActive (true);
 	}
 
-	public void DisableSlowDownButton(){
-		SlowDownButton.GetComponent<Animator>().SetBool ("EnableSlowDownButton", false);
+	void HideCoinsCounterButton(){
+		CoinsCounter.SetActive (false);
 	}
 
-	public void ShowSlowDownButton(){
-		if (firstTimeSlowDown) {
-			SlowDownButton.GetComponent<Animator> ().runtimeAnimatorController = (RuntimeAnimatorController)RuntimeAnimatorController.Instantiate(Resources.Load ("Animations/SlowDownButton", typeof(RuntimeAnimatorController)));
-			firstTimeSlowDown = false;
-		}
-		SlowDownButton.GetComponent<Image>().color = new Color (1, 1, 1, 1);
-		SlowDownButton.GetComponent<Button> ().interactable = true;
+	public void UpdateCoinsCounter(){
+		CoinsCounter.transform.FindChild ("CoinsCounterText").GetComponent<Text> ().text = PlayerPrefs.GetFloat ("lifeCoins").ToString();
 	}
 
-	public void HideSlowDownButton(){
-		SlowDownButton.GetComponent<Image>().color = new Color (1, 1, 1, 0);
-		SlowDownButton.GetComponent<Button> ().interactable = false;
-	}
 
 	void CalculateLife (){
 		if (PlayerPrefs.GetFloat("lifeCoins") < GameManager.lifecoinRedeem) {
@@ -723,15 +761,10 @@ public class UIManager : MonoBehaviour {
 	public void EarnCoins(){
 		print ("Watch Ad");
 
-		PlayerPrefs.SetFloat ("lifeCoins", PlayerPrefs.GetFloat ("lifeCoins") + GameManager.lifecoinRedeem / 2);
-		if (PlayerPrefs.GetFloat("lifeCoins") >= GameManager.lifecoinRedeem) {
-			//AnotherChance.transform.FindChild ("LifeAvailable").GetComponent<Text> ().text = "";
-			AnotherChance.transform.FindChild ("HeartButton").GetComponent<Image> ().sprite = LifeOn;
-			AnotherChance.transform.FindChild ("LifeCoin glow").gameObject.SetActive (true);
-			AnotherChance.transform.FindChild ("CoinsCounter").GetComponent<Text> ().text = PlayerPrefs.GetFloat ("lifeCoins").ToString ();
-		} else {
-			AnotherChance.transform.FindChild ("CoinsCounter").GetComponent<Text> ().text = PlayerPrefs.GetFloat ("lifeCoins").ToString ();
-		}
+
+		AdManagerScript.ShowAdVideo ();
+
+
 	}
 
 	void EnableHintScreen(){
@@ -739,7 +772,7 @@ public class UIManager : MonoBehaviour {
 		float currHighScore = PlayerPrefs.GetFloat ("highscore");
 		IsHintActive = true;
 		HintScreen.SetActive (true);
-		hintSize = 10;
+		hintSize = 6;
 		if (currHighScore < 30) {
 			currHintNum = Random.Range (0, hintSize);
 		} else if (currHighScore < 50) {
@@ -755,30 +788,27 @@ public class UIManager : MonoBehaviour {
 		//string[] HintsAndAds = new string[] {"ads", "earncoins", "slowdown", "superspeed", "checkpoint", "lifecoin"};
 		switch (currHintNum) {
 		case 0:
+			HintScreen.transform.FindChild ("Rate").gameObject.SetActive (true);
+			HintScreen.GetComponent<Animator> ().Play ("SlideInHint", -1, 0);
+			AdManagerScript.showBanner = true;
+			break;
 		case 1:
-		case 2:
-			HintScreen.transform.FindChild ("Ads").gameObject.SetActive (true);
-			HintScreen.GetComponent<Animator> ().Play ("SlideInAds", -1, 0);
-			break;
-		case 3:
-		case 4:
-		case 5:
 			HintScreen.transform.FindChild ("Earn Coins").gameObject.SetActive (true);
-			HintScreen.GetComponent<Animator> ().Play ("SlideInAds", -1, 0);
+			HintScreen.GetComponent<Animator> ().Play ("SlideInHint", -1, 0);
 			break;
-		case 6:
+		case 2:
 			HintScreen.transform.FindChild ("Hint Slowdown").gameObject.SetActive (true);
 			HintScreen.GetComponent<Animator> ().Play ("SlideInHint", -1, 0);
 			break;
-		case 7:
+		case 3:
 			HintScreen.transform.FindChild ("Hint Superspeed").gameObject.SetActive (true);
 			HintScreen.GetComponent<Animator> ().Play ("SlideInHint", -1, 0);
 			break;
-		case 8:
+		case 4:
 			HintScreen.transform.FindChild ("Hint Checkpoint").gameObject.SetActive (true);
 			HintScreen.GetComponent<Animator> ().Play ("SlideInHint", -1, 0);
 			break;
-		case 9:
+		case 5:
 			HintScreen.transform.FindChild ("Hint Lifecoins").gameObject.SetActive (true);
 			HintScreen.GetComponent<Animator> ().Play ("SlideInHint", -1, 0);
 			break;
@@ -794,7 +824,7 @@ public class UIManager : MonoBehaviour {
 		HintScreen.transform.FindChild ("Hint Slowdown").gameObject.SetActive (false);
 		HintScreen.transform.FindChild ("Hint Superspeed").gameObject.SetActive (false);
 		HintScreen.transform.FindChild ("Hint Checkpoint").gameObject.SetActive (false);
-		HintScreen.transform.FindChild ("Ads").gameObject.SetActive (false);
+		HintScreen.transform.FindChild ("Rate").gameObject.SetActive (false);
 		HintScreen.transform.FindChild ("Earn Coins").gameObject.SetActive (false);
 
 		HintScreen.SetActive (false);
@@ -805,6 +835,15 @@ public class UIManager : MonoBehaviour {
 	}
 
 	void DisableStartScreenAnimation(){
-		StartScreenAnimator.SetActive (false);
+		//StartScreenAnimator.SetActive (false);
+		Destroy(StartScreenAnimator);
+	}
+
+	public void ShowAboutPage(){
+		print ("About page");
+		SlideOutStartScreen ();
+		//GameManager.SetBallFallingFlag (false);
+		SlideInAboutScreen ();
+		aboutScreen = true;
 	}
 }

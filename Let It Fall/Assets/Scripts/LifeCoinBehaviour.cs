@@ -25,7 +25,7 @@ public class LifeCoinBehaviour : MonoBehaviour {
 		//float lifecoinsCollected = PlayerPrefs.GetFloat("lifeCoins");
 		PlayerPrefs.SetFloat ("lifeCoins", GameManager.lifecoinCollected);
 		//print ("Coins collected: " + GameManager.lifecoinCollected);
-
+		UIManager.FindObjectOfType<UIManager>().UpdateCoinsCounter();
 		Destroy (gameObject);
 	}
 }
