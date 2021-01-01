@@ -23,19 +23,21 @@ public class ShareManager : MonoBehaviour {
 
 	public void ActivateShareCanvas(){
 		if (!isProcessing) {
+			UIManager.shareScreen = true;
 			CanvasShare.SetActive (true);
-			CanvasShare.transform.FindChild ("HighScore").GetComponent<Text> ().text = PlayerPrefs.GetFloat ("highscore").ToString();
+			CanvasShare.transform.Find ("HighScore").GetComponent<Text> ().text = PlayerPrefs.GetFloat ("highscore").ToString();
 		}
 	}
 
 	public void ShareHighScore(){
-		CanvasShare.transform.FindChild ("ShareButton").gameObject.SetActive (false);
-		CanvasShare.transform.FindChild ("CancelButton").gameObject.SetActive (false);
+		CanvasShare.transform.Find ("ShareButton").gameObject.SetActive (false);
+		CanvasShare.transform.Find ("CancelButton").gameObject.SetActive (false);
 		StartCoroutine (ShareScreenShot ());
 	}
 		
 	public void CancelShare(){
 		CanvasShare.SetActive(false);
+		UIManager.shareScreen = false;
 	}
 
 	IEnumerator ShareScreenShot(){
@@ -43,7 +45,7 @@ public class ShareManager : MonoBehaviour {
 
 		yield return new WaitForEndOfFrame ();
 
-		Application.CaptureScreenshot ("ShareScreenshot.png", 2);
+		ScreenCapture.CaptureScreenshot ("ShareScreenshot.png", 2);
 		string ScreenshotPath = Path.Combine (Application.persistentDataPath, "ShareScreenshot.png");
 
 		yield return new WaitForSecondsRealtime (0.3f);
@@ -55,7 +57,7 @@ public class ShareManager : MonoBehaviour {
 			AndroidJavaClass uriClass = new AndroidJavaClass ("android.net.Uri");
 			AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject> ("parse", "file://" + ScreenshotPath);
 			intentObject.Call<AndroidJavaObject> ("putExtra", intentClass.GetStatic <string> ("EXTRA_STREAM"), uriObject);
-			intentObject.Call<AndroidJavaObject> ("putExtra", intentClass.GetStatic <string> ("EXTRA_TEXT"), "Check out this awesome game! FREEFALL");
+			intentObject.Call<AndroidJavaObject> ("putExtra", intentClass.GetStatic <string> ("EXTRA_TEXT"), "Check out this awesome game! Download FREEFALL - https://play.google.com/store/apps/details?id=com.PB.LetItFall");
 			intentObject.Call<AndroidJavaObject> ("setType", "image/jpeg");
 			AndroidJavaClass unity = new AndroidJavaClass ("com.unity3d.player.UnityPlayer");
 			AndroidJavaObject currentActivity = unity.GetStatic<AndroidJavaObject> ("currentActivity");
@@ -67,7 +69,7 @@ public class ShareManager : MonoBehaviour {
 
 		yield return new WaitUntil (() => isFocus);
 
-		CanvasShare.transform.FindChild ("ShareButton").gameObject.SetActive (true);
+		CanvasShare.transform.Find ("ShareButton").gameObject.SetActive (true);
 		CanvasShare.SetActive (false);
 		isProcessing = false;
 	}

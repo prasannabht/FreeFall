@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RateManager : MonoBehaviour {
 
-	public string rateURL = "market://details?id=com.ThirdState.SineLine";
+	string rateURL = "market://details?id=com.PB.LetItFall";
 	// Use this for initialization
 	void Start () {
 		
@@ -16,7 +16,7 @@ public class RateManager : MonoBehaviour {
 	}
 
 	public void RateGame(){
-		print ("Rate game");
+		print ("Rate game - " + rateURL);
 		Application.OpenURL (rateURL);
 	}
 }

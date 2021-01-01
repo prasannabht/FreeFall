@@ -27,6 +27,7 @@ public class ObstacleManager : MonoBehaviour {
 	bool firstObstacle = true;
 	GameObject currentObstacle;
 	List<string> obstacleList = new List<string> ();
+
 	bool fadeOutAndDestroyObstacles = false;
 	GameObject[] obstaclesToDestroy;
 	float alphaLevel = 1;
@@ -34,6 +35,9 @@ public class ObstacleManager : MonoBehaviour {
 	float nextLifeCoin;
 
 	float checkpointDistance, checkpointObstacleCount;
+
+//	//object pooling
+//	Dictionary<string, List<GameObject>> pooledObstacles;
 
 	public void SaveCheckpointDetails(){
 		print ("Saving checkpoint details");
@@ -80,10 +84,39 @@ public class ObstacleManager : MonoBehaviour {
 //		}
 	}
 
+	public void ResetObstaclesToCurrentScore(){
+		firstObstacle = true;
+		alphaLevel = 1;
+		fadeOutAndDestroyObstacles = true;
+		obstaclesToDestroy = GameObject.FindGameObjectsWithTag ("obstacle");
+		foreach (GameObject obst in obstaclesToDestroy) {
+			//foreach (PolygonCollider2D col in obst.GetComponentsInChildren<PolygonCollider2D>()) {
+			foreach (Collider2D col in obst.GetComponentsInChildren<Collider2D>()) {
+				col.enabled = false;
+			}
+			obst.tag = "destroyedObstacle";
+		}
+	}
+
 	void Awake(){
 		GameManagerScript = FindObjectOfType<GameManager>();
-
 		sortedObstacles = obstacles.OrderBy(c => c.priority).ToArray();
+
+////		//Object Pooling
+//		pooledObstacles = new Dictionary<string, List<GameObject>> ();
+//
+//		for (int i = 0; i < sortedObstacles.Length; i++) {
+//			GameObject Obj = (GameObject)Instantiate (sortedObstacles [i].obstacleObj, new Vector2 (0, 0), Quaternion.identity);
+//			Obj.name = sortedObstacles [i].obstacleObj.name;
+//			Obj.SetActive (false);
+//
+//			pooledObstacles[Obj.name] = new List<GameObject>(){Obj};
+//		}
+//
+//		foreach (string key in pooledObstacles.Keys) {
+//			print (pooledObstacles [key] [0]);
+//		}
+////
 	}
 
 	void Start () {
@@ -92,64 +125,63 @@ public class ObstacleManager : MonoBehaviour {
 	}
 	
 	void Update () {
-		if (firstObstacle) {
-			firstObstacle = false;
-
-			//randomNum = Random.Range(0,4);
-			obstacle = sortedObstacles [0];
-			currentObstacle = Instantiate (obstacle.obstacleObj, new Vector2 (obstacle.xPos, GameManager.bottomY - 1), Quaternion.identity);
-			currentObstacle.tag = "obstacle";
-			obstacleList.Add (currentObstacle.name);
-			if (!currentObstacle.name.Contains ("Fake"))
-				displayInstructions (currentObstacle);
-			++obstacleCount;
+		
+		//determine level of game, as level increases, distance between objects decreases.
+		if (obstacleCount > 5) {
+			currentDistance = level2Distance;
+		} else if (obstacleCount > 10) {
+			currentDistance = level3Distance;
 		}
 
-		if (currentObstacle.transform.position.y - currentDistance > Camera.main.transform.position.y - shiftHeight / 2) {
+		//Randomly generate obstacles based on priority
+		if (obstacleCount < 5)
+			randomNum = Random.Range (0, 4);
+		else if (obstacleCount < 10)
+			randomNum = Random.Range (0, 6);
+		else if (obstacleCount < 15)
+			randomNum = Random.Range (0, 8);
+		else if (obstacleCount < 20)
+			randomNum = Random.Range (0, 12);
+		else if (obstacleCount < 30)
+			randomNum = Random.Range (0, 14);
+		else if (obstacleCount < 40)
+			randomNum = Random.Range (0, 15);
+		else if (obstacleCount < 50)
+			randomNum = Random.Range (0, 17);
+		else if (obstacleCount < 60)
+			randomNum = Random.Range (0, 21);
+		else if (obstacleCount < 70)
+			randomNum = Random.Range (0, 23);
+		else if (obstacleCount < 80)
+			randomNum = Random.Range (0, 25);
+		else if (obstacleCount < 90)
+			randomNum = Random.Range (0, 27);
+		else if (obstacleCount < 100)
+			randomNum = Random.Range (0, 29);
+		else
+			randomNum = Random.Range (0, 31);
 
-			//determine level of game, as level increases, distance between objects decreases.
-			if (obstacleCount > 5) {
-				currentDistance = level2Distance;
-			} else if (obstacleCount > 10) {
-				currentDistance = level3Distance;
-			}
 
-			//Randomly generate obstacles based on priority
-			if (obstacleCount < 5)
-				randomNum = Random.Range (0, 4);
-			else if (obstacleCount < 10)
-				randomNum = Random.Range (0, 6);
-			else if (obstacleCount < 15)
-				randomNum = Random.Range (0, 8);
-			else if (obstacleCount < 20)
-				randomNum = Random.Range (0, 12);
-			else if (obstacleCount < 30)
-				randomNum = Random.Range (0, 14);
-			else if (obstacleCount < 40)
-				randomNum = Random.Range (0, 15);
-			else if (obstacleCount < 50)
-				randomNum = Random.Range (0, 17);
-			else if (obstacleCount < 60)
-				randomNum = Random.Range (0, 21);
-			else if (obstacleCount < 70)
-				randomNum = Random.Range (0, 23);
-			else if (obstacleCount < 80)
-				randomNum = Random.Range (0, 25);
-			else if (obstacleCount < 90)
-				randomNum = Random.Range (0, 27);
-			else if (obstacleCount < 100)
-				randomNum = Random.Range (0, 29);
-			else
-				randomNum = Random.Range (0, 31);
+		//select current obstacle
+		if (GameManagerScript.Testing) {
+			//print("Generate obstacle: " + Mathf.RoundToInt (obstacleCount % sortedObstacles.Length));
+			//obstacle = sortedObstacles [Mathf.RoundToInt (obstacleCount % sortedObstacles.Length)];
+			obstacle = sortedObstacles [Mathf.RoundToInt (obstacleCount % 4)];
+			//obstacle = sortedObstacles[0];
+		} else {
+			obstacle = sortedObstacles [randomNum];
+		}
 
-			//randomNum = Random.Range(0,obstacles.Length);
-			if (GameManagerScript.Testing) {
-				print("Generate obstacle: " + Mathf.RoundToInt (obstacleCount % sortedObstacles.Length));
-				obstacle = sortedObstacles [Mathf.RoundToInt (obstacleCount % sortedObstacles.Length)];
+		if (firstObstacle || currentObstacle.transform.position.y - currentDistance > Camera.main.transform.position.y - shiftHeight / 2) {
+
+			if (firstObstacle) {
+				//currentObstacle = GenerateObstacle (obstacle.obstacleObj, obstacle.xPos, GameManager.bottomY - 2);
+				currentObstacle = Instantiate (obstacle.obstacleObj, new Vector2 (obstacle.xPos, GameManager.bottomY - 2), Quaternion.identity);
+				firstObstacle = false;
 			} else {
-				obstacle = sortedObstacles [randomNum];
+				//currentObstacle = GenerateObstacle (obstacle.obstacleObj, obstacle.xPos, currentObstacle.transform.position.y - currentDistance);
+				currentObstacle = Instantiate (obstacle.obstacleObj, new Vector2 (obstacle.xPos, currentObstacle.transform.position.y - currentDistance), Quaternion.identity);
 			}
-			currentObstacle = Instantiate (obstacle.obstacleObj, new Vector2 (obstacle.xPos, currentObstacle.transform.position.y - currentDistance), Quaternion.identity);
 			currentObstacle.tag = "obstacle";
 
 			if (obstacleList.Contains (currentObstacle.name) == false) {
@@ -198,7 +230,7 @@ public class ObstacleManager : MonoBehaviour {
 
 	void displayInstructions(GameObject myObstacle){
 		//print (myObstacle.name);
-		myObstacle.transform.root.FindChild ("Instruction").gameObject.SetActive (true);
+		myObstacle.transform.root.Find ("Instruction").gameObject.SetActive (true);
 	}
 
 	public void DisableColliders(){
@@ -219,5 +251,39 @@ public class ObstacleManager : MonoBehaviour {
 			}
 		}
 	}
+
+////	// Object pooling
+//	GameObject GenerateObstacle(GameObject obstacleObject, float xPos, float yPos){
+//		GameObject myObj;
+//		if (!pooledObstacles.ContainsKey(obstacleObject.name)) {
+//			print (obstacleObject.name + " does not exist. Instantiating a new one");
+//			myObj = Instantiate (obstacleObject, new Vector2 (xPos, yPos), Quaternion.identity);
+//			myObj.SetActive (true);
+//			return myObj;
+//		}else{
+//			print (obstacleObject.name + " Key exists.");
+//			bool obstFound = false;
+//			foreach (GameObject obst in pooledObstacles[obstacleObject.name]){
+//				if (!obst.activeSelf) {
+//					obstFound = true;
+//					print (obst.name + " obstacle is inactive. Can be used");
+//					obst.transform.position = new Vector2 (xPos, yPos);
+//					obst.SetActive (true);
+//					return obst;
+//				}
+//			}
+//			if (!obstFound) {
+//				print ("All objects for " + obstacleObject.name + " are active. Instantiating new one");
+//				myObj = Instantiate (obstacleObject, new Vector2 (xPos, yPos), Quaternion.identity);
+//				myObj.SetActive (false);
+//				pooledObstacles [obstacleObject.name].Add (myObj);
+//
+//				myObj.SetActive (true);
+//				return myObj;
+//			}
+//		}
+//
+//		return null;
+//	}
 		
 }

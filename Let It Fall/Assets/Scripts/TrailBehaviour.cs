@@ -5,7 +5,6 @@ using UnityEngine;
 public class TrailBehaviour : MonoBehaviour {
 
 	bool isClicked = false;
-	bool stopTrail = false;
 	[HideInInspector]
 	public bool isEnabled = true;
 	Rigidbody2D rb;

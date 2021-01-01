@@ -4,24 +4,13 @@ using UnityEngine;
 
 public class BombBehaviour : MonoBehaviour {
 
-	//bool isMoving = true;
 	bool fadeAwayInstruction = false;
 	float alphaLevel = 1f;
-	float bombAlphaLevel = 1f;
-
 
 	bool isBombTouched = false;
 	float bombSpeed = 0.06f;
 	bool soundPlayed = false;
-	//BallBehaviour ballScript;
 
-	// Use this for initialization
-	void Start () {
-		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
-
-	}
-	
-	// Update is called once per frame
 	void Update () {
 
 		if (isBombTouched) {
@@ -50,11 +39,11 @@ public class BombBehaviour : MonoBehaviour {
 		if (fadeAwayInstruction) {
 			if (alphaLevel > 0.0f) {
 				alphaLevel -= Time.deltaTime * 10;
-				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+				transform.root.Find ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 			}
 
 			if (alphaLevel <= 0f) {
-				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+				transform.root.Find ("Instruction").gameObject.SetActive(false);
 				fadeAwayInstruction = false;
 			}
 		}
@@ -63,7 +52,7 @@ public class BombBehaviour : MonoBehaviour {
 	void OnMouseDown () {
 		isBombTouched = true;
 
-		if (transform.root.FindChild ("Instruction").gameObject.activeSelf) {
+		if (transform.root.Find ("Instruction").gameObject.activeSelf) {
 			fadeAwayInstruction = true;
 		}
 	}

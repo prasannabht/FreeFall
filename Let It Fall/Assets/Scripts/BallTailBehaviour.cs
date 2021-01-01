@@ -27,12 +27,12 @@ public class BallTailBehaviour : MonoBehaviour {
 			}
 
 			if (FindObjectOfType<UIManager> ().IsSuperSpeed) {
-				if (transform.localScale.y < 1.3f) {
+				if (transform.localScale.y < 1.8f) {
 					currScale.y += Time.deltaTime;
 					transform.localScale = currScale;
 				} 
 			} else {
-				if (transform.localScale.y > 1f) {
+				if (transform.localScale.y > 1.662915f) {
 					currScale.y -= Time.deltaTime;
 					transform.localScale = currScale;
 				}

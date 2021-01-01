@@ -13,6 +13,7 @@ public class MagneticBallBehaviour : MonoBehaviour {
 	bool magnetActive = false;
 	bool fadeAwayInstruction = false;
 	float alphaLevel = 1f;
+	bool soundPlayed = false;
 
 	void Start () {
 		initX = this.transform.localPosition.x;
@@ -22,7 +23,7 @@ public class MagneticBallBehaviour : MonoBehaviour {
 		else
 			maxX = initX - 1.2f;
 
-		magneticSlider = transform.parent.FindChild ("MagneticSlider").gameObject;
+		magneticSlider = transform.parent.Find ("MagneticSlider").gameObject;
 
 		initXSlider = magneticSlider.transform.localPosition.x;
 		initYSlider = magneticSlider.transform.localPosition.y;
@@ -41,11 +42,11 @@ public class MagneticBallBehaviour : MonoBehaviour {
 		if (fadeAwayInstruction) {
 			if (alphaLevel > 0.0f) {
 				alphaLevel -= Time.deltaTime * 5;
-				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+				transform.root.Find ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 			}
 
 			if (alphaLevel <= 0f) {
-				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+				transform.root.Find ("Instruction").gameObject.SetActive(false);
 				fadeAwayInstruction = false;
 			}
 		}
@@ -58,6 +59,13 @@ public class MagneticBallBehaviour : MonoBehaviour {
 	void OnMouseDrag () {
 
 		if (GameManager.IsBallFalling()) {
+
+			//play sound
+			if (!soundPlayed) {
+				//GetComponent<AudioSource> ().Play();
+				FindObjectOfType<AudioManager>().Play("Slider");
+				soundPlayed = true;
+			}
 
 			tempX = Camera.main.ScreenToWorldPoint (new Vector2 (myX, myY)).x;
 
@@ -90,7 +98,7 @@ public class MagneticBallBehaviour : MonoBehaviour {
 			}
 
 			if (!transform.root.gameObject.name.Contains("Fake")) {
-				if (transform.root.FindChild ("Instruction").gameObject.activeSelf) {
+				if (transform.root.Find ("Instruction").gameObject.activeSelf) {
 					fadeAwayInstruction = true;
 				}
 			}

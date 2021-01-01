@@ -24,7 +24,7 @@ public class PullyBehaviour : MonoBehaviour {
 		initX = transform.localPosition.x;
 		initY = transform.localPosition.y;
 
-		Slider = transform.parent.FindChild ("Pully Slider");
+		Slider = transform.parent.Find ("Pully Slider");
 		initSliderY = Slider.localPosition.y;
 		initSliderX = Slider.localPosition.x;
 
@@ -65,11 +65,11 @@ public class PullyBehaviour : MonoBehaviour {
 		if (fadeAwayInstruction && GameManager.IsBallFalling()) {
 			if (alphaLevel > 0.0f) {
 				alphaLevel -= Time.deltaTime * 5;
-				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+				transform.root.Find ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 			}
 
 			if (alphaLevel <= 0f) {
-				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+				transform.root.Find ("Instruction").gameObject.SetActive(false);
 				fadeAwayInstruction = false;
 			}
 		}
@@ -87,7 +87,7 @@ public class PullyBehaviour : MonoBehaviour {
 			//play sound
 			if (!soundPlayed) {
 				//GetComponent<AudioSource> ().Play();
-				FindObjectOfType<AudioManager>().Play("Pully");
+				FindObjectOfType<AudioManager>().Play("Slider");
 				soundPlayed = true;
 			}
 
@@ -118,7 +118,7 @@ public class PullyBehaviour : MonoBehaviour {
 
 		}
 
-		if (transform.root.FindChild ("Instruction").gameObject.activeSelf) {
+		if (transform.root.Find ("Instruction").gameObject.activeSelf) {
 			fadeAwayInstruction = true;
 		}
 	}

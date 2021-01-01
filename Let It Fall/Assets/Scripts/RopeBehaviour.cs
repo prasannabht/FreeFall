@@ -26,11 +26,11 @@ public class RopeBehaviour : MonoBehaviour {
 		if (fadeAwayInstruction) {
 			if (alphaLevel > 0.0f) {
 				alphaLevel -= Time.deltaTime * 5;
-				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+				transform.root.Find ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 			}
 
 			if (alphaLevel <= 0f) {
-				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+				transform.root.Find ("Instruction").gameObject.SetActive(false);
 				fadeAwayInstruction = false;
 			}
 		}
@@ -52,7 +52,7 @@ public class RopeBehaviour : MonoBehaviour {
 
 			//isClicked = true;
 			transform.GetComponentInParent<RopeRotaterBehaviour> ().isRopeTouched = true;
-			if (transform.root.FindChild ("Instruction").gameObject.activeSelf) {
+			if (transform.root.Find ("Instruction").gameObject.activeSelf) {
 				fadeAwayInstruction = true;
 			}
 

@@ -7,11 +7,8 @@ public class BallThrowerRotaterBehaviour : MonoBehaviour {
 	Vector3 pos;
 	float ang;
 	float angDiff;
-	float initX;
-	//BallBehaviour ballScript;
+
 	bool autoMove = false;
-	//bool isMoving = true;
-	//bool isClicked = false;
 	bool fadeAwayInstruction = false;
 	float alphaLevel = 1f;
 
@@ -23,9 +20,7 @@ public class BallThrowerRotaterBehaviour : MonoBehaviour {
 
 
 	void Start () {
-		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
-		//audioSource.clip = rotaterSound;
-		initX = this.transform.position.x;
+
 		initAngle = transform.rotation.eulerAngles.z;
 		initAngle1 = transform.rotation.eulerAngles.z;
 		//print ("Init: " + initAngle);
@@ -70,11 +65,11 @@ public class BallThrowerRotaterBehaviour : MonoBehaviour {
 		if (fadeAwayInstruction && GameManager.IsBallFalling()) {
 			if (alphaLevel > 0.0f) {
 				alphaLevel -= Time.deltaTime * 10f;
-				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+				transform.root.Find ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 			}
 
 			if (alphaLevel <= 0f) {
-				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+				transform.root.Find ("Instruction").gameObject.SetActive(false);
 				fadeAwayInstruction = false;
 			}
 		}
@@ -114,7 +109,7 @@ public class BallThrowerRotaterBehaviour : MonoBehaviour {
 		}
 
 		if (!transform.root.gameObject.name.Contains ("Fake")) {
-			if (transform.root.FindChild ("Instruction").gameObject.activeSelf) {
+			if (transform.root.Find ("Instruction").gameObject.activeSelf) {
 				fadeAwayInstruction = true;
 			}
 		}

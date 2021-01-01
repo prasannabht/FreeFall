@@ -28,7 +28,7 @@ public class PunchBehaviour : MonoBehaviour {
 
 	void Start () {
 		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
-		puncher = transform.FindChild ("Puncher");
+		puncher = transform.Find ("Puncher");
 		initAngle = transform.rotation.eulerAngles.z;
 		if (initAngle >= 180)
 			initAngle = initAngle - 360;
@@ -44,6 +44,10 @@ public class PunchBehaviour : MonoBehaviour {
 
 		fraction = Mathf.Sin(Time.time * puncherSpeed);
 		puncher.localPosition = Vector3.Lerp (minPos, maxPos, fraction);
+
+		if (!GameManager.IsBallFalling ()) {
+			puncher.gameObject.GetComponent<Collider2D> ().enabled = false;
+		}
 
 		if (autoMove && GameManager.IsBallFalling()) {
 			if (!isNextStopDefined) {
@@ -81,11 +85,11 @@ public class PunchBehaviour : MonoBehaviour {
 		if (fadeAwayInstruction && GameManager.IsBallFalling()) {
 			if (alphaLevel > 0.0f) {
 				alphaLevel -= Time.deltaTime * 5;
-				transform.root.FindChild ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
+				transform.root.Find ("Instruction").gameObject.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, alphaLevel);
 			}
 
 			if (alphaLevel <= 0f) {
-				transform.root.FindChild ("Instruction").gameObject.SetActive(false);
+				transform.root.Find ("Instruction").gameObject.SetActive(false);
 				fadeAwayInstruction = false;
 			}
 		}
@@ -119,7 +123,7 @@ public class PunchBehaviour : MonoBehaviour {
 		}
 
 		if (!transform.root.gameObject.name.Contains ("Fake")) {
-			if (transform.root.FindChild ("Instruction").gameObject.activeSelf) {
+			if (transform.root.Find ("Instruction").gameObject.activeSelf) {
 				fadeAwayInstruction = true;
 			}
 		}

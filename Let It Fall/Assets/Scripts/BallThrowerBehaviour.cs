@@ -17,6 +17,10 @@ public class BallThrowerBehaviour : MonoBehaviour {
 	void Update () {
 		transform.Translate (Time.deltaTime * Mathf.Cos(ballThrowerAngle) * ballThrowerSpeed * xDir, Time.deltaTime * Mathf.Sin(ballThrowerAngle) * ballThrowerSpeed, 0);
 
+		if (!GameManager.IsBallFalling ()) {
+			this.gameObject.GetComponent<Collider2D> ().enabled = false;
+		}
+
 		if (Mathf.Abs (transform.position.x) > 3.5f)
 			Destroy (gameObject);
 	}

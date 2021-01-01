@@ -21,7 +21,7 @@ public class MovementBehaviour : MonoBehaviour {
 			transform.Translate (0, Time.deltaTime * currSpeed, 0, Space.World);
 		}
 
-		if (gameObject.tag == "obstacle" && !hasCrossedBall) {
+		if (gameObject.tag == "obstacle" && !hasCrossedBall && gameObject.activeSelf) {
 			if (transform.position.y > GameManager.topY - 1) {
 				hasCrossedBall = true;
 				++score;
@@ -31,6 +31,8 @@ public class MovementBehaviour : MonoBehaviour {
 
 		if (transform.position.y > GameManager.topY + 1) {
 			Destroy (gameObject);
+			//gameObject.SetActive(false);
+
 		}
 	}
 }

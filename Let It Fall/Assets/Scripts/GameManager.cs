@@ -42,41 +42,52 @@ public class GameManager : MonoBehaviour {
 	public static float rightX;
 	public static float topY;
 	public static float bottomY;
-//
-//	public static float checkpointInitScore = 50;
-//	public static float checkpointRepeat = 30;
-//	public static float nextCheckpoint;
-//
-//	public static float superspeedInitScore = 70;
-//	public static float superspeedRepeat = 30;
-//	public static float nextSuperspeed;
-//
-//	public static float slowdownInitScore = 90;
-//	public static float slowdownRepeat = 30;
-//	public static float nextSlowdown;
-//
-//	public static float lifecoinInitScore = 20;
-//	public static float lifecoinRepeat = 5;
-//	public static float lifecoinRedeem = 20;
-//	public static float lifecoinCollected = 0;
 
-	//For testing
-	public static float checkpointInitScore = 5;
-	public static float checkpointRepeat = 10;
+	public static bool showAchievement = false;
+	float achievedScore = 0f;
+
+
+	public static float checkpointInitScore = 50;
+	public static float checkpointRepeat = 30;
 	public static float nextCheckpoint;
 
-	public static float superspeedInitScore = 5;
-	public static float superspeedRepeat = 10;
+	public static float superspeedInitScore = 70;
+	public static float superspeedRepeat = 30;
 	public static float nextSuperspeed;
 
-	public static float slowdownInitScore = 5;
-	public static float slowdownRepeat = 10;
+	public static float slowdownInitScore = 90;
+	public static float slowdownRepeat = 30;
 	public static float nextSlowdown;
 
-	public static float lifecoinInitScore = 5;
-	public static float lifecoinRepeat = 2;
-	public static float lifecoinRedeem = 5;
+	public static float lifecoinInitScore = 20;
+	public static float lifecoinRepeat = 5;
+	public static float lifecoinRedeem = 20;
 	public static float lifecoinCollected = 0;
+ 	public static float backgroundColorChange = 20f;
+	public static float achievementInterval = 50;
+	public static float achievementReward = 25;
+
+//	//For testing
+//	public static float checkpointInitScore = 5;
+//	public static float checkpointRepeat = 10;
+//	public static float nextCheckpoint;
+//
+//	public static float superspeedInitScore = 5;
+//	public static float superspeedRepeat = 10;
+//	public static float nextSuperspeed;
+//
+//	public static float slowdownInitScore = 5;
+//	public static float slowdownRepeat = 10;
+//	public static float nextSlowdown;
+//
+//	public static float lifecoinInitScore = 5;
+//	public static float lifecoinRepeat = 2;
+//	public static float lifecoinRedeem = 5;
+//	//public static float lifecoinCollected = 0;  
+//	public static float backgroundColorChange = 5f;
+//	public static float achievementInterval = 5;
+//	public static float achievementReward = 10;
+
 
 
 	void Awake (){
@@ -88,6 +99,14 @@ public class GameManager : MonoBehaviour {
 		UIManagerScript = FindObjectOfType<UIManager>();
 		AudioManagerScript = FindObjectOfType<AudioManager>();
 		ObstacleManagerScript = FindObjectOfType<ObstacleManager>();
+
+		if (!PlayerPrefs.HasKey ("achievement")) {
+			PlayerPrefs.SetFloat ("achievement", 0);
+		}
+
+		if (!PlayerPrefs.HasKey ("instructionsShown")) {
+			PlayerPrefs.SetInt ("instructionsShown", 0);
+		}
 	}
 
 	void Start () {
@@ -102,7 +121,7 @@ public class GameManager : MonoBehaviour {
 
 		speed = initialSpeed;
 
-		lifecoinCollected = PlayerPrefs.GetFloat ("lifeCoins");
+		//lifecoinCollected = PlayerPrefs.GetFloat ("lifeCoins");
 
 		initCamPos = camTransform.localPosition;
 		duration = shakeDuration;
@@ -110,6 +129,7 @@ public class GameManager : MonoBehaviour {
 	
 
 	void Update () {
+
 		//update speed
 		speed = IncreaseSpeed(ObstacleManagerScript.obstacleCount);
 
@@ -160,6 +180,13 @@ public class GameManager : MonoBehaviour {
 		if (score > PlayerPrefs.GetFloat ("highscore")) {
 			UIManager.celebrateHighScore = true;
 			PlayerPrefs.SetFloat ("highscore", score);
+		}
+		if (score % achievementInterval == 0) {
+			if (score > PlayerPrefs.GetFloat ("achievement")) {
+				print ("New Achievement: " + score);
+				PlayerPrefs.SetFloat ("achievement", score);
+				showAchievement = true;
+			}
 		}
 	}
 

@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class BeedsBehaviour : MonoBehaviour {
 
-	float initY, initX, myX, myY, distX, tempX;
+	float initX, myX, myY, distX, tempX;
 	Vector2 pos;
-	bool fadeAwayInstruction = false;
 	float minBoundary = -2.32f;
 	float maxBoundary = 2.32f;
 	bool soundPlayed = false;
@@ -15,7 +14,6 @@ public class BeedsBehaviour : MonoBehaviour {
 
 		//ballScript = GameObject.FindObjectOfType (typeof(BallBehaviour)) as BallBehaviour;
 
-		initY = transform.parent.localPosition.y;
 		initX = transform.localPosition.x;
 
 
@@ -59,10 +57,7 @@ public class BeedsBehaviour : MonoBehaviour {
 
 			}
 		}
-
-		if (transform.root.FindChild ("Instruction").gameObject.activeSelf) {
-			fadeAwayInstruction = true;
-		}
+			
 	}
 
 }
